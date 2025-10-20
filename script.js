@@ -4,7 +4,6 @@ class PortfolioApp {
         this.youtubeVideos = [];
         this.portfolioItems = [];
         this.currentFilter = 'all';
-        this.currentPlayingVideo = null;
         this.youtubePlayers = {};
         
         this.init();
@@ -21,7 +20,7 @@ class PortfolioApp {
         this.youtubeSwiper = new Swiper('.youtubeSwiper', {
             slidesPerView: 1,
             spaceBetween: 20,
-            loop: false, // Вимикаємо loop щоб уникнути попередження
+            loop: false,
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
@@ -57,6 +56,7 @@ class PortfolioApp {
     
     addYouTubeVideos() {
         const swiperWrapper = document.querySelector('.youtubeSwiper .swiper-wrapper');
+        if (!swiperWrapper) return;
         
         // Ваші YouTube відео
         const youtubeVideos = [
@@ -89,8 +89,15 @@ class PortfolioApp {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide';
             slide.innerHTML = `
-                <div class="video-container" data-video-id="${video.id}" data-index="${index}">
-                    <div class="youtube-player" id="youtube-player-${index}"></div>
+                <div class="video-container" data-video-id="${video.id}">
+                    <iframe 
+                        src="https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1" 
+                        title="${video.title}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen
+                        loading="lazy"
+                        frameborder="0">
+                    </iframe>
                     <div class="video-playing-indicator">▶ Відтворюється</div>
                     <div class="video-controls">Клікніть для відтворення</div>
                 </div>
@@ -103,95 +110,32 @@ class PortfolioApp {
         
         this.youtubeSwiper.update();
         
-        // Завантажуємо YouTube API
-        this.loadYouTubeAPI();
+        // Налаштування кліків для відео
+        this.setupVideoClickHandlers();
     }
     
-    loadYouTubeAPI() {
-        // Перевіряємо чи вже завантажено API
-        if (window.YT) {
-            this.onYouTubeAPIReady();
-            return;
-        }
-        
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        
-        window.onYouTubeIframeAPIReady = () => {
-            this.onYouTubeAPIReady();
-        };
-    }
-    
-    onYouTubeAPIReady() {
-        const videoContainers = document.querySelectorAll('.video-container');
-        
-        videoContainers.forEach((container, index) => {
-            const videoId = container.dataset.videoId;
-            const playerId = `youtube-player-${index}`;
-            
-            this.youtubePlayers[playerId] = new YT.Player(playerId, {
-                videoId: videoId,
-                playerVars: {
-                    'playsinline': 1,
-                    'rel': 0,
-                    'modestbranding': 1,
-                    'showinfo': 0
-                },
-                events: {
-                    'onStateChange': (event) => this.onPlayerStateChange(event, container)
-                }
-            });
-            
-            // Додаємо обробник кліку
-            container.addEventListener('click', () => {
-                this.handleVideoClick(container, playerId);
-            });
-        });
-    }
-    
-    handleVideoClick(container, playerId) {
-        const slide = container.closest('.swiper-slide');
-        const player = this.youtubePlayers[playerId];
-        
-        if (!player) return;
-        
-        // Якщо відео вже відтворюється - пауза
-        if (slide.classList.contains('playing-video')) {
-            player.pauseVideo();
-            slide.classList.remove('playing-video');
-            this.currentPlayingVideo = null;
-        } else {
-            // Зупиняємо поточне відео
-            this.pauseAllVideos();
-            
-            // Запускаємо нове відео
-            player.playVideo();
-            slide.classList.add('playing-video');
-            this.currentPlayingVideo = player;
-            
-            // Збільшуємо слайд
-            this.enlargeVideoSlide(slide);
-        }
-    }
-    
-    pauseAllVideos() {
-        // Зупиняємо всі відео
-        Object.values(this.youtubePlayers).forEach(player => {
-            if (player && player.pauseVideo) {
-                player.pauseVideo();
+    setupVideoClickHandlers() {
+        document.addEventListener('click', (e) => {
+            const videoContainer = e.target.closest('.video-container');
+            if (videoContainer) {
+                this.handleVideoClick(videoContainer);
             }
         });
+    }
+    
+    handleVideoClick(container) {
+        const iframe = container.querySelector('iframe');
+        const slide = container.closest('.swiper-slide');
         
-        // Видаляємо класи відтворення
-        const allSlides = document.querySelectorAll('.swiper-slide');
-        allSlides.forEach(slide => {
-            slide.classList.remove('playing-video');
-            slide.classList.remove('enlarged');
-        });
+        if (!iframe) return;
         
-        this.currentPlayingVideo = null;
+        // Проста реалізація - YouTube сам обробляє відтворення
+        // При кліку YouTube автоматично запускає відео
+        slide.classList.add('playing-video');
+        this.enlargeVideoSlide(slide);
+        
+        // Зменшуємо інші відео
+        this.shrinkOtherVideos(slide);
     }
     
     enlargeVideoSlide(slide) {
@@ -199,39 +143,21 @@ class PortfolioApp {
         const previousEnlarged = document.querySelector('.swiper-slide.enlarged');
         if (previousEnlarged && previousEnlarged !== slide) {
             previousEnlarged.classList.remove('enlarged');
+            previousEnlarged.classList.remove('playing-video');
         }
         
         // Додаємо клас збільшення
         slide.classList.add('enlarged');
-        
-        // Оновлюємо Swiper для коректного відображення
-        this.youtubeSwiper.update();
     }
     
-    onPlayerStateChange(event, container) {
-        const slide = container.closest('.swiper-slide');
-        const player = event.target;
-        
-        switch(event.data) {
-            case YT.PlayerState.PLAYING:
-                // Автоматично зупиняємо інші відео при запуску нового
-                if (this.currentPlayingVideo && this.currentPlayingVideo !== player) {
-                    this.pauseAllVideos();
-                }
-                this.currentPlayingVideo = player;
-                slide.classList.add('playing-video');
-                this.enlargeVideoSlide(slide);
-                break;
-                
-            case YT.PlayerState.PAUSED:
-            case YT.PlayerState.ENDED:
-                slide.classList.remove('playing-video');
+    shrinkOtherVideos(currentSlide) {
+        const allSlides = document.querySelectorAll('.swiper-slide');
+        allSlides.forEach(slide => {
+            if (slide !== currentSlide) {
                 slide.classList.remove('enlarged');
-                if (this.currentPlayingVideo === player) {
-                    this.currentPlayingVideo = null;
-                }
-                break;
-        }
+                slide.classList.remove('playing-video');
+            }
+        });
     }
     
     loadPortfolioItems() {
@@ -491,10 +417,12 @@ class PortfolioApp {
         
         // Спостереження за елементами для анімації
         document.querySelectorAll('.skill-item, .portfolio-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            }
         });
     }
 }
