@@ -1,4 +1,3 @@
-// Використовуємо глобальні об'єкти THREE, GLTFLoader, OrbitControls з CDN
 (function () {
   const container = document.getElementById('logo-container');
   if (!container) {
@@ -73,5 +72,7 @@
   // Якщо контейнер змінює розмір — слідкуємо
   if ('ResizeObserver' in window) {
     new ResizeObserver(onResize).observe(container);
+  } else {
+    console.warn('ResizeObserver не підтримується в цьому браузері.');
   }
 })();
