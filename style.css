@@ -1,310 +1,160 @@
-:root {
-    --royal-blue: #002366;
-    --electric-blue: #00308F;
-    --light-accent: #5072A7;
-    --text-light: #F0F8FF;
-    --background-dark: #001233;
-}
+/* Додайте ці стилі в кінець файлу style.css */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--background-dark);
-    color: var(--text-light);
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Header Styles */
-.header {
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
+/* Lightbox Styles */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
 }
 
-.header-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--royal-blue) 0%, var(--background-dark) 100%);
-    z-index: -1;
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
 
-.header-content {
-    z-index: 2;
-}
-
-#logo3d-container {
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 30px;
-    border-radius: 20px;
+.lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    background: var(--royal-blue);
+    border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    animation: scaleIn 0.3s ease forwards;
 }
 
-.header-title {
+@keyframes scaleIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+.lightbox-content img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: var(--background-dark);
+}
+
+.lightbox-info {
+    padding: 30px;
+    color: var(--text-light);
+}
+
+.lightbox-info h3 {
     font-family: 'Poppins', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 700;
+    font-size: 1.8rem;
     margin-bottom: 10px;
-    background: linear-gradient(45deg, var(--text-light), #87CEEB);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-light);
 }
 
-.header-subtitle {
-    font-size: 1.3rem;
+.lightbox-category {
+    color: var(--light-accent);
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.lightbox-description {
+    line-height: 1.6;
     opacity: 0.9;
 }
 
-/* Section Styles */
-section {
-    padding: 80px 0;
-}
-
-.section-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 50px;
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2rem;
     color: var(--text-light);
+    background: rgba(0, 0, 0, 0.5);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
 }
 
-/* YouTube Carousel */
-.youtube-section {
-    background: var(--electric-blue);
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
 }
 
+/* Покращення для портфоліо */
+.item-description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 5px;
+    display: none;
+}
+
+.portfolio-item:hover .item-description {
+    display: block;
+}
+
+/* Покращення для каруселі */
 .youtubeSwiper {
-    padding: 20px 0 50px;
+    padding: 20px 0 60px;
 }
 
 .swiper-slide {
-    background: var(--royal-blue);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.video-container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-}
-
-.video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-    color: var(--text-light);
-}
-
-.swiper-pagination-bullet-active {
-    background: var(--text-light);
-}
-
-/* Portfolio Filters */
-.portfolio-filters {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 40px;
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    padding: 12px 24px;
-    background: transparent;
-    border: 2px solid var(--light-accent);
-    color: var(--text-light);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: var(--light-accent);
-    transform: translateY(-2px);
-}
-
-/* Portfolio Grid */
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-auto-rows: 250px;
-    gap: 20px;
-    grid-auto-flow: dense;
-}
-
-.portfolio-item {
-    position: relative;
-    border-radius: 15px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-.portfolio-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     transition: transform 0.3s ease;
 }
 
-.portfolio-item:hover img {
-    transform: scale(1.05);
-}
-
-.portfolio-item-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0, 35, 102, 0.9));
-    padding: 20px;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
-
-.portfolio-item:hover .portfolio-item-overlay {
-    transform: translateY(0);
-}
-
-/* Skills Section */
-.skills-section {
-    background: var(--electric-blue);
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-}
-
-.skill-item {
-    background: var(--royal-blue);
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-
-.skill-item:hover {
+.swiper-slide:hover {
     transform: translateY(-5px);
 }
 
-.skill-item h3 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: var(--text-light);
-}
-
-/* Footer */
-.footer {
-    background: var(--background-dark);
-    text-align: center;
-}
-
-.contact-links {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
-}
-
-.contact-link {
-    color: var(--text-light);
-    text-decoration: none;
-    padding: 12px 24px;
-    border: 2px solid var(--light-accent);
-    border-radius: 25px;
-    transition: all 0.3s ease;
-    font-family: 'Poppins', sans-serif;
-}
-
-.contact-link:hover {
-    background: var(--light-accent);
-    transform: translateY(-2px);
-}
-
-/* Responsive Design */
+/* Адаптивність для lightbox */
 @media (max-width: 768px) {
-    .header-title {
-        font-size: 2.5rem;
+    .lightbox-content {
+        max-width: 95%;
+        max-height: 95%;
     }
     
-    .header-subtitle {
-        font-size: 1.1rem;
+    .lightbox-info {
+        padding: 20px;
     }
     
-    #logo3d-container {
-        width: 200px;
-        height: 200px;
+    .lightbox-info h3 {
+        font-size: 1.4rem;
     }
     
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-        grid-auto-rows: 300px;
-    }
-    
-    .portfolio-filters {
-        gap: 10px;
-    }
-    
-    .filter-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-    
-    .contact-links {
-        flex-direction: column;
-        align-items: center;
+    .lightbox-close {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 1.5rem;
     }
 }
 
-@media (max-width: 480px) {
-    .section-title {
-        font-size: 2rem;
-    }
-    
-    .header-title {
-        font-size: 2rem;
-    }
-    
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
+/* Loading states */
+.portfolio-item img {
+    transition: opacity 0.3s ease;
+}
+
+.portfolio-item img[src*="placeholder"] {
+    background: var(--light-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-family: 'Poppins', sans-serif;
 }
