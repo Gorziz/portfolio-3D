@@ -50,62 +50,69 @@ body {
 .header-content {
     z-index: 2;
     position: relative;
+    background: transparent !important;
 }
 
-/* Стилі для 3D контейнера - ОНОВЛЕНІ */
+/* Стилі для 3D контейнера - ДУЖЕ ВЕЛИКИЙ БЕЗ ФОНУ */
 #logo3d-container {
     width: 100%;
-    max-width: 500px; /* Збільшено розмір */
-    height: 400px; /* Висота */
+    max-width: 1000px; /* Дуже великий розмір */
+    height: 700px; /* Висота */
     margin: 0 auto 30px;
-    border-radius: 20px;
-    overflow: hidden;
-    background: transparent; /* Прозорий фон замість синього */
+    background: transparent !important; /* Повністю прозорий фон */
     position: relative;
+    border-radius: 0; /* Без закруглень */
+    box-shadow: none !important; /* Без тіні */
+    border: none !important; /* Без рамки */
+    overflow: visible;
 }
 
 #logo3d-container canvas {
     width: 100% !important;
     height: 100% !important;
     display: block;
-    border-radius: 20px;
     background: transparent !important; /* Прозорий фон для canvas */
+    border-radius: 0 !important; /* Без закруглень */
+    box-shadow: none !important; /* Без тіні */
+    border: none !important;
 }
 
-/* Альтернативний варіант - ще більше лого */
+/* Альтернативні розміри */
+#logo3d-container.giant {
+    max-width: 900px;
+    height: 650px;
+}
+
 #logo3d-container.large {
-    max-width: 600px;
-    height: 450px;
+    max-width: 800px;
+    height: 600px;
 }
 
-#logo3d-container.xlarge {
-    max-width: 700px;
+#logo3d-container.medium {
+    max-width: 600px;
     height: 500px;
 }
 
-/* Мобільна адаптація для збільшеного лого */
-@media (max-width: 768px) {
-    #logo3d-container {
-        max-width: 350px; /* Збільшено для мобільних */
-        height: 300px;
-    }
-    
-    #logo3d-container.large {
-        max-width: 400px;
-        height: 320px;
-    }
+#logo3d-container.small {
+    max-width: 400px;
+    height: 350px;
 }
 
-@media (max-width: 480px) {
-    #logo3d-container {
-        max-width: 280px;
-        height: 250px;
-    }
-    
-    #logo3d-container.large {
-        max-width: 320px;
-        height: 270px;
-    }
+.header-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, var(--text-light), #87CEEB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    letter-spacing: 1px;
 }
 
 /* Section Styles */
@@ -642,19 +649,49 @@ section {
     transform: rotate(90deg);
 }
 
-/* Responsive Design */
+/* ГАРАНТОВАНА ПРОЗОРІСТЬ ДЛЯ ЛОГО */
+#logo3d-container * {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Мобільна адаптація для дуже великого лого */
+@media (max-width: 1200px) {
+    #logo3d-container {
+        max-width: 900px;
+        height: 600px;
+    }
+}
+
+@media (max-width: 992px) {
+    #logo3d-container {
+        max-width: 800px;
+        height: 550px;
+    }
+    
+    .header-title {
+        font-size: 3rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+}
+
 @media (max-width: 768px) {
+    #logo3d-container {
+        max-width: 600px;
+        height: 450px;
+    }
+    
     .header-title {
         font-size: 2.5rem;
     }
     
     .header-subtitle {
         font-size: 1.1rem;
-    }
-    
-    #logo3d-container {
-        max-width: 300px;
-        height: 300px;
     }
     
     .section-title {
@@ -717,15 +754,40 @@ section {
         font-size: 0.8rem;
         padding: 8px 16px;
     }
+    
+    #logo3d-container.giant {
+        max-width: 550px;
+        height: 400px;
+    }
+}
+
+@media (max-width: 576px) {
+    #logo3d-container {
+        max-width: 500px;
+        height: 350px;
+    }
+    
+    .header-title {
+        font-size: 2.2rem;
+    }
+    
+    .header-subtitle {
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
+    #logo3d-container {
+        max-width: 400px;
+        height: 300px;
+    }
+    
     .header-title {
         font-size: 2rem;
     }
     
     .header-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .section-title {
@@ -768,11 +830,6 @@ section {
         font-size: 1rem;
     }
     
-    #logo3d-container {
-        max-width: 250px;
-        height: 250px;
-    }
-    
     .video-playing-indicator {
         font-size: 0.7rem;
         padding: 4px 8px;
@@ -781,5 +838,93 @@ section {
     .video-controls {
         font-size: 0.75rem;
         padding: 6px 12px;
+    }
+    
+    #logo3d-container.giant {
+        max-width: 350px;
+        height: 250px;
+    }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--light-accent);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--electric-blue);
+}
+
+/* Selection Styles */
+::selection {
+    background: var(--light-accent);
+    color: var(--text-light);
+}
+
+::-moz-selection {
+    background: var(--light-accent);
+    color: var(--text-light);
+}
+
+/* Focus Styles */
+button:focus,
+a:focus {
+    outline: 2px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .header {
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .youtube-section,
+    .portfolio-filters,
+    .lightbox-close {
+        display: none;
+    }
+    
+    .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --royal-blue: #000080;
+        --electric-blue: #0000FF;
+        --light-accent: #4169E1;
+        --text-light: #FFFFFF;
+        --background-dark: #000000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .swiper-slide.playing-video,
+    .swiper-slide.enlarged {
+        transform: none !important;
+        animation: none !important;
     }
 }
