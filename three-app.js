@@ -36,9 +36,9 @@ class Logo3D {
             this.scene = new THREE.Scene();
             this.scene.background = new THREE.Color(0x002366);
             
-            // Камера - збільшено поле зору для більшого лого
-            this.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000); // Збільшено FOV
-            this.camera.position.set(0, 0, 6); // Зменшено відстань
+            // Камера
+            this.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+            this.camera.position.set(0, 0, 6);
             
             // Рендерер
             const container = document.getElementById('logo3d-container');
@@ -53,14 +53,10 @@ class Logo3D {
                 alpha: true
             });
             
-            // Збільшений розмір рендерера
             this.renderer.setSize(container.clientWidth, container.clientHeight);
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             
             container.appendChild(this.renderer.domElement);
-            
-            // Додавання loading індикатора
-            this.showLoadingIndicator();
             
             // Освітлення
             this.setupLighting();
@@ -82,7 +78,96 @@ class Logo3D {
         }
     }
     
-    // ... інші методи залишаються без змін, крім centerCamera ...
+    checkWebGLSupport() {
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            return !!gl;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    showWebGLError() {
+        const container = document.getElementById('logo3d-container');
+        if (container) {
+            container.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
+                            background: linear-gradient(135deg, #002366, #00308F); border-radius: 20px; color: white;
+                            font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 10px; font-size: 1.2rem;">3D Logo</h3>
+                        <p style="opacity: 0.8; font-size: 0.9rem; margin-bottom: 15px;">WebGL не підтримується</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    setupLighting() {
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        this.scene.add(ambientLight);
+        
+        // Directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 5, 5);
+        this.scene.add(directionalLight);
+        
+        // Fill light
+        const fillLight = new THREE.DirectionalLight(0x87CEEB, 0.3);
+        fillLight.position.set(-5, -3, 5);
+        this.scene.add(fillLight);
+    }
+    
+    loadLogo() {
+        // Спроба використати GLTFLoader якщо доступний
+        if (typeof THREE.GLTFLoader === 'undefined') {
+            console.warn('⚠️ GLTFLoader не доступний, створюю запасне лого');
+            this.createFallbackLogo();
+            return;
+        }
+        
+        try {
+            const loader = new THREE.GLTFLoader();
+            const modelPath = './assets/my_logo.glb';
+            
+            console.log('📥 Завантаження моделі:', modelPath);
+            
+            loader.load(modelPath, 
+                // Успішне завантаження
+                (gltf) => {
+                    console.log('✅ Модель успішно завантажена');
+                    
+                    this.logo = gltf.scene;
+                    this.isModelLoaded = true;
+                    
+                    // Налаштування моделі
+                    this.setupModel();
+                    
+                    // Центрування камери
+                    this.centerCamera();
+                    
+                }, 
+                // Помилка завантаження
+                (error) => {
+                    console.error('❌ Помилка завантаження моделі:', error);
+                    this.createFallbackLogo();
+                }
+            );
+        } catch (error) {
+            console.error('❌ Помилка в loadLogo:', error);
+            this.createFallbackLogo();
+        }
+    }
+    
+    setupModel() {
+        this.logo.scale.set(1, 1, 1);
+        this.logo.position.set(0, 0, 0);
+        this.logo.rotation.set(0, 0, 0);
+        
+        this.scene.add(this.logo);
+    }
     
     centerCamera() {
         if (!this.logo) return;
@@ -95,22 +180,26 @@ class Logo3D {
         const fov = this.camera.fov * (Math.PI / 180);
         let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
         
-        // Зменшено множник для більшого лого
-        cameraZ = cameraZ * 1.2; // Зменшено з 1.8
+        cameraZ = cameraZ * 1.8;
         this.camera.position.z = cameraZ;
         
         this.camera.lookAt(center);
-        
-        console.log('🎯 Камера відцентрована, зум:', cameraZ.toFixed(2));
     }
     
     createFallbackLogo() {
         console.log('🔄 Створення запасного лого...');
         
+        // Перевірка чи сцена існує
+        if (!this.scene) {
+            console.error('❌ Сцена не ініціалізована');
+            return;
+        }
+        
+        // Група для запасного лого
         const group = new THREE.Group();
         
-        // Збільшена геометрія
-        const geometry = new THREE.IcosahedronGeometry(2.0, 2); // Збільшено радіус
+        // Основна геометрія
+        const geometry = new THREE.IcosahedronGeometry(2.0, 1);
         const material = new THREE.MeshPhongMaterial({ 
             color: 0x5072A7,
             transparent: true,
@@ -121,6 +210,7 @@ class Logo3D {
         const mainMesh = new THREE.Mesh(geometry, material);
         group.add(mainMesh);
         
+        // Контурні лінії
         const edges = new THREE.EdgesGeometry(geometry);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: 0x00308F,
@@ -133,10 +223,78 @@ class Logo3D {
         this.logo = group;
         this.scene.add(this.logo);
         
-        console.log('✅ Запасне лого створено (збільшене)');
+        console.log('✅ Запасне лого створено');
     }
     
-    // ... решта методів без змін ...
+    createFallbackDisplay() {
+        const container = document.getElementById('logo3d-container');
+        if (container) {
+            container.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
+                            background: linear-gradient(135deg, #002366, #00308F); border-radius: 20px; color: white;
+                            font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🎨</div>
+                        <h3 style="margin-bottom: 10px; font-size: 1.2rem;">3D Artist</h3>
+                        <p style="opacity: 0.8; font-size: 0.9rem;">Blender3D • UE5 • Clo3D</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    setupEventListeners() {
+        // Відстеження позиції курсору
+        document.addEventListener('mousemove', (event) => {
+            this.mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+        
+        // Адаптація до розміру вікна
+        window.addEventListener('resize', () => {
+            this.onWindowResize();
+        });
+    }
+    
+    onWindowResize() {
+        const container = document.getElementById('logo3d-container');
+        if (!container || !this.camera || !this.renderer) return;
+        
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+    }
+    
+    animate() {
+        this.animationId = requestAnimationFrame(() => this.animate());
+        
+        try {
+            if (this.logo) {
+                // Плавне слідкування за курсором
+                this.targetRotationY = this.mouseX * 0.5;
+                this.targetRotationX = this.mouseY * 0.3;
+                
+                // Плавна інтерполяція
+                this.logo.rotation.y += (this.targetRotationY - this.logo.rotation.y) * 0.05;
+                this.logo.rotation.x += (this.targetRotationX - this.logo.rotation.x) * 0.05;
+                
+                // Додаткове плавне обертання
+                this.logo.rotation.y += 0.001;
+                
+                // Обмеження обертання
+                this.logo.rotation.x = Math.max(-0.8, Math.min(0.8, this.logo.rotation.x));
+                this.logo.rotation.y = Math.max(-1.2, Math.min(1.2, this.logo.rotation.y));
+            }
+            
+            this.renderer.render(this.scene, this.camera);
+            
+        } catch (error) {
+            console.error('❌ Помилка в анімації:', error);
+        }
+    }
 }
 
 // Ініціалізація при завантаженні сторінки
