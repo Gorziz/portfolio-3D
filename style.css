@@ -1,14 +1,26 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #121212;
   color: #f0f0f0;
+  text-align: center;
 }
 
 header {
-  text-align: center;
-  padding: 100px 20px;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background-image: url('images/header-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 10px;
 }
 
 header h1 {
@@ -56,6 +68,35 @@ section {
   margin-top: 20px;
   max-width: 100%;
   border-radius: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+input, textarea {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+button {
+  background-color: #00bcd4;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0097a7;
 }
 
 footer {
