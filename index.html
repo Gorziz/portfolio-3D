@@ -7,17 +7,21 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.39/build/spline-viewer.js"></script>
 </head>
 <body>
-    <!-- Header з 3D лого -->
-    <header class="header">
-        <div class="header-background"></div>
-        <div class="header-content">
-            <div id="logo3d-container"></div>
-            <h1 class="header-title">3D Artist & Animator</h1>
-            <p class="header-subtitle">Blender3D • UE5 • Clo3D • Spline</p>
+    <!-- Spline сцена замість хедера -->
+    <section class="spline-hero">
+        <spline-viewer 
+            url="https://my.spline.design/robotfollowcursorforlandingpage-O2E70n3vPG8qBzh1vwERff2K/"
+            loading-anim-type="spinner-small-dark"
+            class="spline-container">
+        </spline-viewer>
+        <div class="hero-content">
+            <h1 class="hero-title">3D Artist & Animator</h1>
+            <p class="hero-subtitle">Blender3D • UE5 • Clo3D • Spline</p>
         </div>
-    </header>
+    </section>
 
     <!-- YouTube карусель -->
     <section class="youtube-section">
@@ -87,11 +91,7 @@
         </div>
     </footer>
 
-    <!-- Використовуємо CDN з повною версією Three.js що включає всі модулі -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="three-app.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
