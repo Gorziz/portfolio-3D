@@ -55,8 +55,8 @@ body {
 /* Стилі для 3D контейнера */
 #logo3d-container {
     width: 100%;
-    max-width: 300px;
-    height: 300px;
+    max-width: 400px;
+    height: 400px;
     margin: 0 auto 30px;
     border-radius: 20px;
     overflow: hidden;
@@ -168,8 +168,9 @@ section {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     height: auto;
+    position: relative;
 }
 
 .swiper-slide:hover {
@@ -177,11 +178,24 @@ section {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
+/* Стилі для активного відео */
+.swiper-slide.playing-video {
+    transform: scale(1.1);
+    z-index: 20;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.swiper-slide.enlarged {
+    transform: scale(1.15);
+    z-index: 30;
+}
+
 .video-container {
     position: relative;
     padding-bottom: 56.25%;
     height: 0;
     background: var(--background-dark);
+    cursor: pointer;
 }
 
 .video-container iframe {
@@ -194,9 +208,51 @@ section {
     border-radius: 15px 15px 0 0;
 }
 
+/* Індикатор відтворення */
+.video-playing-indicator {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 5;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: none;
+}
+
+/* Контроли для відео */
+.video-controls {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 5;
+    opacity: 0;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+.video-container:hover .video-controls {
+    opacity: 1;
+}
+
 .video-info {
     padding: 20px;
     text-align: center;
+    background: var(--royal-blue);
 }
 
 .video-info h3 {
@@ -219,11 +275,20 @@ section {
     height: 50px;
     border-radius: 50%;
     backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
     font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .swiper-pagination-bullet {
@@ -231,11 +296,13 @@ section {
     opacity: 0.5;
     width: 12px;
     height: 12px;
+    transition: all 0.3s ease;
 }
 
 .swiper-pagination-bullet-active {
     background: var(--text-light);
     opacity: 1;
+    transform: scale(1.2);
 }
 
 /* Portfolio Filters */
@@ -635,6 +702,25 @@ a:focus {
     outline-offset: 2px;
 }
 
+/* Пауза для autoplay при наведенні */
+.youtubeSwiper.swiper-paused .swiper-autoplay {
+    animation-play-state: paused;
+}
+
+/* Анімації для відео слайдів */
+@keyframes videoEnlarge {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.15);
+    }
+}
+
+.swiper-slide.playing-video {
+    animation: videoEnlarge 0.3s ease forwards;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .container {
@@ -654,6 +740,14 @@ a:focus {
     .portfolio-grid {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
+    
+    .swiper-slide.playing-video {
+        transform: scale(1.08);
+    }
+    
+    .swiper-slide.enlarged {
+        transform: scale(1.1);
+    }
 }
 
 @media (max-width: 768px) {
@@ -666,8 +760,8 @@ a:focus {
     }
     
     #logo3d-container {
-        max-width: 200px;
-        height: 200px;
+        max-width: 300px;
+        height: 300px;
     }
     
     .section-title {
@@ -716,6 +810,19 @@ a:focus {
     
     .youtubeSwiper {
         padding: 20px 0 50px;
+    }
+    
+    .swiper-slide.playing-video {
+        transform: scale(1.05);
+    }
+    
+    .swiper-slide.enlarged {
+        transform: scale(1.08);
+    }
+    
+    .video-controls {
+        font-size: 0.8rem;
+        padding: 8px 16px;
     }
     
     .lightbox-content {
@@ -792,6 +899,21 @@ a:focus {
     .swiper-button-prev::after {
         font-size: 1rem;
     }
+    
+    #logo3d-container {
+        max-width: 250px;
+        height: 250px;
+    }
+    
+    .video-playing-indicator {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .video-controls {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
 }
 
 /* Print Styles */
@@ -833,9 +955,15 @@ a:focus {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+    
+    .swiper-slide.playing-video,
+    .swiper-slide.enlarged {
+        transform: none !important;
+        animation: none !important;
+    }
 }
 
-/* Dark mode support (if needed) */
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
     /* Colors already optimized for dark theme */
 }
@@ -867,4 +995,76 @@ a:focus {
     border-top: 3px solid var(--light-accent);
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+/* Спеціальні стилі для YouTube iframe */
+.video-container iframe {
+    transition: all 0.3s ease;
+}
+
+.swiper-slide.playing-video .video-container iframe {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* Покращення доступності для відео */
+.video-container:focus {
+    outline: 2px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+/* Стилі для Swiper autoplay progress */
+.swiper-autoplay-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 5;
+}
+
+.swiper-autoplay-progress-fill {
+    height: 100%;
+    background: var(--light-accent);
+    transition: width 0.1s linear;
+}
+
+/* Ховер ефекти для кращої інтерактивності */
+.swiper-slide {
+    cursor: grab;
+}
+
+.swiper-slide:active {
+    cursor: grabbing;
+}
+
+/* Покращення видимості активних елементів */
+.filter-btn.active {
+    background: var(--light-accent);
+    color: var(--background-dark);
+    font-weight: 600;
+}
+
+/* Стилі для скролл-барів в Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--light-accent) var(--background-dark);
+}
+
+/* Покращення читабельності тексту */
+p, li {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Стилі для виділення тексту */
+::selection {
+    background: var(--light-accent);
+    color: var(--text-light);
+}
+
+::-moz-selection {
+    background: var(--light-accent);
+    color: var(--text-light);
 }
