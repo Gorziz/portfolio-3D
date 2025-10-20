@@ -14,6 +14,18 @@ header {
   background-image: url('images/header-bg.jpg');
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(65, 105, 225, 0.5); /* Королівський синій з прозорістю */
+  z-index: 1;
 }
 
 .overlay {
@@ -21,12 +33,16 @@ header {
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
+  z-index: 2;
+  position: relative;
 }
 
 #logo-container {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 80vh;
   margin: 0 auto;
+  z-index: 3;
+  position: relative;
 }
 
 .gallery {
@@ -40,4 +56,8 @@ header {
   width: 100%;
   height: auto;
   border-radius: 5px;
+}
+
+h1, h2, p, ul {
+  text-align: center;
 }
