@@ -37,8 +37,8 @@ class Logo3D {
             this.scene.background = null;
             
             // Камера - оптимізована для дуже великого лого
-            this.camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000); // Широкий кут огляду
-            this.camera.position.set(0, 0, 4); // Ще ближче для більшого розміру
+            this.camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
+            this.camera.position.set(0, 0, 4);
             
             // Рендерер - максимально прозорий
             const container = document.getElementById('logo3d-container');
@@ -53,7 +53,7 @@ class Logo3D {
             
             this.renderer = new THREE.WebGLRenderer({ 
                 antialias: true, 
-                alpha: true, // Прозорість
+                alpha: true,
                 powerPreference: "high-performance"
             });
             
@@ -62,7 +62,7 @@ class Logo3D {
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             
             // Прозорість та якість
-            this.renderer.setClearColor(0x000000, 0); // Повністю прозорий
+            this.renderer.setClearColor(0x000000, 0);
             this.renderer.shadowMap.enabled = true;
             this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             
@@ -85,11 +85,37 @@ class Logo3D {
             // Анімація
             this.animate();
             
-            console.log('✅ 3D лого ініціалізовано успішно - ДУЖЕ ВЕЛИКИЙ РОЗМІР');
+            console.log('✅ 3D лого ініціалізовано успішно');
             
         } catch (error) {
             console.error('❌ Помилка ініціалізації 3D:', error);
             this.createFallbackLogo();
+        }
+    }
+    
+    checkWebGLSupport() {
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            return !!gl;
+        } catch (e) {
+            return false;
+        }
+    }
+    
+    showWebGLError() {
+        const container = document.getElementById('logo3d-container');
+        if (container) {
+            container.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
+                            background: transparent; border-radius: 20px; color: white;
+                            font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 10px; font-size: 1.2rem;">3D Logo</h3>
+                        <p style="opacity: 0.8; font-size: 0.9rem; margin-bottom: 15px;">WebGL не підтримується</p>
+                    </div>
+                </div>
+            `;
         }
     }
     
@@ -108,6 +134,55 @@ class Logo3D {
         const fillLight = new THREE.DirectionalLight(0x87CEEB, 0.4);
         fillLight.position.set(-3, -2, 4);
         this.scene.add(fillLight);
+    }
+    
+    loadLogo() {
+        // Спроба використати GLTFLoader якщо доступний
+        if (typeof THREE.GLTFLoader === 'undefined') {
+            console.warn('⚠️ GLTFLoader не доступний, створюю запасне лого');
+            this.createFallbackLogo();
+            return;
+        }
+        
+        try {
+            const loader = new THREE.GLTFLoader();
+            const modelPath = './assets/my_logo.glb';
+            
+            console.log('📥 Завантаження моделі:', modelPath);
+            
+            loader.load(modelPath, 
+                // Успішне завантаження
+                (gltf) => {
+                    console.log('✅ Модель успішно завантажена');
+                    
+                    this.logo = gltf.scene;
+                    this.isModelLoaded = true;
+                    
+                    // Налаштування моделі
+                    this.setupModel();
+                    
+                    // Центрування камери
+                    this.centerCamera();
+                    
+                }, 
+                // Помилка завантаження
+                (error) => {
+                    console.error('❌ Помилка завантаження моделі:', error);
+                    this.createFallbackLogo();
+                }
+            );
+        } catch (error) {
+            console.error('❌ Помилка в loadLogo:', error);
+            this.createFallbackLogo();
+        }
+    }
+    
+    setupModel() {
+        this.logo.scale.set(1, 1, 1);
+        this.logo.position.set(0, 0, 0);
+        this.logo.rotation.set(0, 0, 0);
+        
+        this.scene.add(this.logo);
     }
     
     centerCamera() {
@@ -133,12 +208,15 @@ class Logo3D {
     createFallbackLogo() {
         console.log('🔄 Створення запасного лого...');
         
-        if (!this.scene) return;
+        if (!this.scene) {
+            console.error('❌ Сцена не ініціалізована');
+            return;
+        }
         
         const group = new THREE.Group();
         
         // Максимальна геометрія для великого відображення
-        const geometry = new THREE.IcosahedronGeometry(3.0, 3); // Дуже великий і детальний
+        const geometry = new THREE.IcosahedronGeometry(3.0, 3);
         const material = new THREE.MeshPhongMaterial({ 
             color: 0x5072A7,
             transparent: true,
@@ -169,7 +247,75 @@ class Logo3D {
         console.log('✅ Запасне лого створено (дуже велике)');
     }
     
-    // ... решта методів без змін ...
+    createFallbackDisplay() {
+        const container = document.getElementById('logo3d-container');
+        if (container) {
+            container.innerHTML = `
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
+                            background: transparent; color: white;
+                            font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🎨</div>
+                        <h3 style="margin-bottom: 10px; font-size: 1.2rem;">3D Artist</h3>
+                        <p style="opacity: 0.8; font-size: 0.9rem;">Blender3D • UE5 • Clo3D</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    setupEventListeners() {
+        // Відстеження позиції курсору
+        document.addEventListener('mousemove', (event) => {
+            this.mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+        
+        // Адаптація до розміру вікна
+        window.addEventListener('resize', () => {
+            this.onWindowResize();
+        });
+    }
+    
+    onWindowResize() {
+        const container = document.getElementById('logo3d-container');
+        if (!container || !this.camera || !this.renderer) return;
+        
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+    }
+    
+    animate() {
+        this.animationId = requestAnimationFrame(() => this.animate());
+        
+        try {
+            if (this.logo) {
+                // Плавне слідкування за курсором
+                this.targetRotationY = this.mouseX * 0.5;
+                this.targetRotationX = this.mouseY * 0.3;
+                
+                // Плавна інтерполяція
+                this.logo.rotation.y += (this.targetRotationY - this.logo.rotation.y) * 0.05;
+                this.logo.rotation.x += (this.targetRotationX - this.logo.rotation.x) * 0.05;
+                
+                // Додаткове плавне обертання
+                this.logo.rotation.y += 0.001;
+                
+                // Обмеження обертання
+                this.logo.rotation.x = Math.max(-0.8, Math.min(0.8, this.logo.rotation.x));
+                this.logo.rotation.y = Math.max(-1.2, Math.min(1.2, this.logo.rotation.y));
+            }
+            
+            this.renderer.render(this.scene, this.camera);
+            
+        } catch (error) {
+            console.error('❌ Помилка в анімації:', error);
+        }
+    }
 }
 
 // Ініціалізація при завантаженні сторінки
