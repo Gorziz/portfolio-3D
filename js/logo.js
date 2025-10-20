@@ -28,10 +28,15 @@
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false;
   controls.enablePan = false;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 2;
+  controls.autoRotate = false;
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
+
+  // Обмеження обертання
+  controls.minPolarAngle = Math.PI / 2 - 0.5; // 30 градусів
+  controls.maxPolarAngle = Math.PI / 2 + 0.5; // 30 градусів
+  controls.minAzimuthAngle = -0.5; // 30 градусів
+  controls.maxAzimuthAngle = 0.5; // 30 градусів
 
   // Світло
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
@@ -51,6 +56,11 @@
     (error) => console.error('Помилка завантаження GLB:', error)
   );
 
+  // Функція для ресету позиції
+  function resetPosition() {
+    controls.reset();
+  }
+
   // Анімація
   function animate() {
     requestAnimationFrame(animate);
@@ -63,11 +73,15 @@
   function onResize() {
     const w = container.clientWidth;
     const h = container.clientHeight;
+    const headerHeight = window.innerHeight * 0.8;
+    const size = Math.min(w, headerHeight);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    container.style.height = `${headerHeight}px`;
   }
   window.addEventListener('resize', onResize);
+  onResize(); // Викликаємо для встановлення початкового розміру
 
   // Якщо контейнер змінює розмір — слідкуємо
   if ('ResizeObserver' in window) {
