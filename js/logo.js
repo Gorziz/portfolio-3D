@@ -1,80 +1,67 @@
-const container = document.getElementById('logo-container');
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-camera.position.set(0, 1, 3);
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const container = document.getElementById('logo-container');
+
+// Сцена
+const scene = new THREE.Scene();
+
+// Камера
+const camera = new THREE.PerspectiveCamera(
+  45,
+  container.clientWidth / container.clientHeight,
+  0.1,
+  100
+);
+camera.position.set(0, 0, 2);
+
+// Рендерер
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 container.appendChild(renderer.domElement);
 
-const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-scene.add(light);
+// Управління
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;
+controls.enablePan = false;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 2;
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
 
-const loader = new THREE.GLTFLoader();
-let logo, initialRotation;
-let autoRotate = true;
-let mouseActive = false;
+// Освітлення
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+scene.add(ambientLight);
 
-loader.load('my_logo.glb', gltf => {
-  logo = gltf.scene;
-  scene.add(logo);
-  initialRotation = logo.rotation.clone();
-}, undefined, error => {
-  console.error('Помилка завантаження GLB:', error);
-});
+// Завантаження GLB-моделі
+const loader = new GLTFLoader();
+loader.load(
+  'my_logo.glb',
+  (gltf) => {
+    const model = gltf.scene;
+    model.scale.set(1, 1, 1);
+    model.rotation.y = Math.PI;
+    scene.add(model);
+  },
+  undefined,
+  (error) => {
+    console.error('Помилка завантаження GLB:', error);
+  }
+);
 
-function clampAngle(angle, maxDegrees) {
-  const max = THREE.MathUtils.degToRad(maxDegrees);
-  return Math.max(-max, Math.min(max, angle));
-}
-
+// Анімація
 function animate() {
   requestAnimationFrame(animate);
-
-  if (logo && autoRotate && !mouseActive) {
-    logo.rotation.y += 0.005;
-  }
-
+  controls.update();
   renderer.render(scene, camera);
 }
-
 animate();
 
-container.addEventListener('mousemove', e => {
-  if (!logo) return;
-  mouseActive = true;
-  autoRotate = false;
-
-  const rect = container.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-  const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-
-  const targetRotationY = clampAngle(x * Math.PI / 6, 30);
-  const targetRotationX = clampAngle(-y * Math.PI / 6, 30);
-
-  logo.rotation.x = targetRotationX;
-  logo.rotation.y = targetRotationY;
-});
-
-container.addEventListener('mouseleave', () => {
-  if (!logo) return;
-  mouseActive = false;
-
-  const duration = 0.5;
-  const start = performance.now();
-  const fromX = logo.rotation.x;
-  const fromY = logo.rotation.y;
-
-  function resetAnimation(time) {
-    const t = Math.min((time - start) / (duration * 1000), 1);
-    logo.rotation.x = THREE.MathUtils.lerp(fromX, initialRotation.x, t);
-    logo.rotation.y = THREE.MathUtils.lerp(fromY, initialRotation.y, t);
-    if (t < 1) {
-      requestAnimationFrame(resetAnimation);
-    } else {
-      autoRotate = true;
-    }
-  }
-
-  requestAnimationFrame(resetAnimation);
+// Адаптація при зміні розміру
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
 });
