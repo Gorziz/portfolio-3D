@@ -1,9 +1,10 @@
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Jura', sans-serif;
   background-color: #121212;
   color: #f0f0f0;
   text-align: center;
+  text-transform: uppercase;
 }
 
 header {
@@ -39,12 +40,33 @@ header p {
   padding: 10px 20px;
   text-decoration: none;
   border-radius: 5px;
+  display: inline-block;
 }
 
 section {
   padding: 60px 20px;
   max-width: 1000px;
   margin: auto;
+}
+
+section h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+section p {
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 10px 0;
+  font-size: 1em;
 }
 
 .gallery {
@@ -64,12 +86,6 @@ section {
   transform: scale(1.05);
 }
 
-.videos iframe {
-  margin-top: 20px;
-  max-width: 100%;
-  border-radius: 10px;
-}
-
 form {
   display: flex;
   flex-direction: column;
@@ -84,6 +100,7 @@ input, textarea {
   border-radius: 5px;
   background-color: #1e1e1e;
   color: #fff;
+  text-transform: uppercase;
 }
 
 button {
@@ -93,6 +110,7 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  text-transform: uppercase;
 }
 
 button:hover {
