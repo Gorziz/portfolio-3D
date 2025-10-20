@@ -72,34 +72,6 @@ body {
     border-radius: 20px;
 }
 
-/* Індикатор завантаження */
-.logo-loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--text-light);
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-}
-
-.logo-loading::after {
-    content: '';
-    display: block;
-    width: 30px;
-    height: 30px;
-    margin: 15px auto 0;
-    border: 3px solid transparent;
-    border-top: 3px solid var(--text-light);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .header-title {
     font-family: 'Poppins', sans-serif;
     font-size: 3.5rem;
@@ -198,7 +170,7 @@ section {
     cursor: pointer;
 }
 
-.video-container iframe {
+.youtube-player {
     position: absolute;
     top: 0;
     left: 0;
@@ -223,6 +195,10 @@ section {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     display: none;
+}
+
+.swiper-slide.playing-video .video-playing-indicator {
+    display: block;
 }
 
 /* Контроли для відео */
@@ -260,11 +236,6 @@ section {
     font-size: 1.1rem;
     margin-bottom: 5px;
     color: var(--text-light);
-}
-
-.video-info p {
-    font-size: 0.9rem;
-    opacity: 0.8;
 }
 
 .swiper-button-next,
@@ -652,104 +623,7 @@ section {
     transform: rotate(90deg);
 }
 
-/* Loading states */
-.portfolio-item img {
-    transition: opacity 0.3s ease;
-}
-
-.portfolio-item img[src*="placeholder"] {
-    background: var(--light-accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-light);
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--background-dark);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--light-accent);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--electric-blue);
-}
-
-/* Selection Styles */
-::selection {
-    background: var(--light-accent);
-    color: var(--text-light);
-}
-
-::-moz-selection {
-    background: var(--light-accent);
-    color: var(--text-light);
-}
-
-/* Focus Styles */
-button:focus,
-a:focus {
-    outline: 2px solid var(--light-accent);
-    outline-offset: 2px;
-}
-
-/* Пауза для autoplay при наведенні */
-.youtubeSwiper.swiper-paused .swiper-autoplay {
-    animation-play-state: paused;
-}
-
-/* Анімації для відео слайдів */
-@keyframes videoEnlarge {
-    0% {
-        transform: scale(1);
-    }
-    100% {
-        transform: scale(1.15);
-    }
-}
-
-.swiper-slide.playing-video {
-    animation: videoEnlarge 0.3s ease forwards;
-}
-
 /* Responsive Design */
-@media (max-width: 1200px) {
-    .container {
-        max-width: 1000px;
-    }
-}
-
-@media (max-width: 992px) {
-    .header-title {
-        font-size: 3rem;
-    }
-    
-    .section-title {
-        font-size: 2.2rem;
-    }
-    
-    .portfolio-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
-    
-    .swiper-slide.playing-video {
-        transform: scale(1.08);
-    }
-    
-    .swiper-slide.enlarged {
-        transform: scale(1.1);
-    }
-}
-
 @media (max-width: 768px) {
     .header-title {
         font-size: 2.5rem;
@@ -824,27 +698,6 @@ a:focus {
         font-size: 0.8rem;
         padding: 8px 16px;
     }
-    
-    .lightbox-content {
-        max-width: 95%;
-        max-height: 95%;
-    }
-    
-    .lightbox-info {
-        padding: 20px;
-    }
-    
-    .lightbox-info h3 {
-        font-size: 1.4rem;
-    }
-    
-    .lightbox-close {
-        top: 10px;
-        right: 10px;
-        width: 35px;
-        height: 35px;
-        font-size: 1.5rem;
-    }
 }
 
 @media (max-width: 480px) {
@@ -885,10 +738,6 @@ a:focus {
         font-size: 0.8rem;
     }
     
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
-    
     .swiper-button-next,
     .swiper-button-prev {
         width: 40px;
@@ -914,157 +763,4 @@ a:focus {
         font-size: 0.75rem;
         padding: 6px 12px;
     }
-}
-
-/* Print Styles */
-@media print {
-    .header {
-        height: auto;
-        min-height: 100vh;
-    }
-    
-    .youtube-section,
-    .portfolio-filters,
-    .lightbox-close {
-        display: none;
-    }
-    
-    .portfolio-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    :root {
-        --royal-blue: #000080;
-        --electric-blue: #0000FF;
-        --light-accent: #4169E1;
-        --text-light: #FFFFFF;
-        --background-dark: #000000;
-    }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-    
-    .swiper-slide.playing-video,
-    .swiper-slide.enlarged {
-        transform: none !important;
-        animation: none !important;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    /* Colors already optimized for dark theme */
-}
-
-/* Loading animation for page */
-.page-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--background-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.page-loading.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid transparent;
-    border-top: 3px solid var(--light-accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-/* Спеціальні стилі для YouTube iframe */
-.video-container iframe {
-    transition: all 0.3s ease;
-}
-
-.swiper-slide.playing-video .video-container iframe {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-}
-
-/* Покращення доступності для відео */
-.video-container:focus {
-    outline: 2px solid var(--light-accent);
-    outline-offset: 2px;
-}
-
-/* Стилі для Swiper autoplay progress */
-.swiper-autoplay-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.1);
-    z-index: 5;
-}
-
-.swiper-autoplay-progress-fill {
-    height: 100%;
-    background: var(--light-accent);
-    transition: width 0.1s linear;
-}
-
-/* Ховер ефекти для кращої інтерактивності */
-.swiper-slide {
-    cursor: grab;
-}
-
-.swiper-slide:active {
-    cursor: grabbing;
-}
-
-/* Покращення видимості активних елементів */
-.filter-btn.active {
-    background: var(--light-accent);
-    color: var(--background-dark);
-    font-weight: 600;
-}
-
-/* Стилі для скролл-барів в Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--light-accent) var(--background-dark);
-}
-
-/* Покращення читабельності тексту */
-p, li {
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Стилі для виділення тексту */
-::selection {
-    background: var(--light-accent);
-    color: var(--text-light);
-}
-
-::-moz-selection {
-    background: var(--light-accent);
-    color: var(--text-light);
 }
