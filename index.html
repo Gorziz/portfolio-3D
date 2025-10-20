@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Портфоліо 3D художника</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>Я — 3D художник та аніматор</h1>
-    <p>Оживляю ідеї у тривимірному світі</p>
-    <a href="#portfolio" class="btn">Дивитися роботи</a>
+    <div class="overlay">
+      <h1>Я — 3D художник та аніматор</h1>
+      <p>Оживляю ідеї у тривимірному світі</p>
+      <a href="#portfolio" class="btn">Дивитися роботи</a>
+    </div>
   </header>
 
   <section id="about">
@@ -43,8 +46,12 @@
 
   <section id="contact">
     <h2>Контакти</h2>
-    <p>Email: yourname@email.com</p>
-    <p>ArtStation: <a href="https://www.artstation.com/yourprofile" target="_blank">Мій профіль</a></p>
+    <form action="https://formspree.io/f/yourformid" method="POST">
+      <input type="text" name="name" placeholder="Ім’я" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <textarea name="message" rows="5" placeholder="Повідомлення" required></textarea>
+      <button type="submit">Надіслати</button>
+    </form>
   </section>
 
   <footer>
