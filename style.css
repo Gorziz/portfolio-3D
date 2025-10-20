@@ -928,3 +928,78 @@ a:focus {
         animation: none !important;
     }
 }
+/* Стилі для покращеної доступності YouTube */
+.video-thumbnail-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.video-container.playing-video .video-thumbnail-overlay {
+    opacity: 0;
+}
+
+.play-button {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 0, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.video-container:hover .play-button {
+    transform: scale(1.1);
+}
+
+/* Покращення фокусу для доступності */
+.video-container:focus {
+    outline: 3px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+.portfolio-item:focus {
+    outline: 3px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+.filter-btn:focus {
+    outline: 3px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+.lightbox-close:focus {
+    outline: 3px solid var(--light-accent);
+    outline-offset: 2px;
+}
+
+/* Скидання lazy loading для покращення продуктивності */
+.portfolio-item img {
+    loading: eager;
+}
+
+/* Приховування YouTube елементів, які викликають помилки доступності */
+.video-container iframe {
+    /* YouTube сам додає aria-hidden, це нормально */
+}
+
+/* Стилі для станів фокусу */
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--light-accent);
+    outline-offset: 2px;
+}
