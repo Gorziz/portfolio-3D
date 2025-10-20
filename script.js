@@ -4,7 +4,7 @@ class PortfolioApp {
         this.youtubeVideos = [];
         this.portfolioItems = [];
         this.currentFilter = 'all';
-        this.youtubePlayers = {};
+        this.currentPlayingVideo = null;
         
         this.init();
     }
@@ -89,17 +89,22 @@ class PortfolioApp {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide';
             slide.innerHTML = `
-                <div class="video-container" data-video-id="${video.id}">
+                <div class="video-container" data-video-id="${video.id}" tabindex="0" role="button" aria-label="Відтворити відео: ${video.title}">
                     <iframe 
-                        src="https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1" 
+                        src="https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1&playsinline=1&enablejsapi=0" 
                         title="${video.title}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
                         loading="lazy"
-                        frameborder="0">
+                        frameborder="0"
+                        aria-hidden="true"
+                        tabindex="-1">
                     </iframe>
-                    <div class="video-playing-indicator">▶ Відтворюється</div>
-                    <div class="video-controls">Клікніть для відтворення</div>
+                    <div class="video-thumbnail-overlay">
+                        <div class="play-button" aria-hidden="true">▶</div>
+                    </div>
+                    <div class="video-playing-indicator" aria-hidden="true">▶ Відтворюється</div>
+                    <div class="video-controls" aria-hidden="true">Клікніть для відтворення</div>
                 </div>
                 <div class="video-info">
                     <h3>${video.title}</h3>
@@ -117,8 +122,19 @@ class PortfolioApp {
     setupVideoClickHandlers() {
         document.addEventListener('click', (e) => {
             const videoContainer = e.target.closest('.video-container');
-            if (videoContainer) {
+            if (videoContainer && !e.target.closest('.ytp-button')) {
                 this.handleVideoClick(videoContainer);
+            }
+        });
+        
+        // Додаємо обробники клавіатури для доступності
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                const videoContainer = e.target.closest('.video-container');
+                if (videoContainer) {
+                    e.preventDefault();
+                    this.handleVideoClick(videoContainer);
+                }
             }
         });
     }
@@ -129,13 +145,48 @@ class PortfolioApp {
         
         if (!iframe) return;
         
-        // Проста реалізація - YouTube сам обробляє відтворення
-        // При кліку YouTube автоматично запускає відео
-        slide.classList.add('playing-video');
-        this.enlargeVideoSlide(slide);
+        // Отримуємо поточний src
+        const currentSrc = iframe.src;
         
-        // Зменшуємо інші відео
-        this.shrinkOtherVideos(slide);
+        // Якщо відео вже відтворюється, зупиняємо його
+        if (slide.classList.contains('playing-video')) {
+            // Зупиняємо відео шляхом перезавантаження iframe
+            iframe.src = iframe.src.replace('&autoplay=1', '');
+            slide.classList.remove('playing-video');
+            slide.classList.remove('enlarged');
+            this.currentPlayingVideo = null;
+        } else {
+            // Зупиняємо поточне відео
+            this.pauseAllVideos();
+            
+            // Запускаємо нове відео
+            iframe.src = currentSrc.includes('autoplay=1') 
+                ? currentSrc 
+                : currentSrc + '&autoplay=1';
+            
+            slide.classList.add('playing-video');
+            this.currentPlayingVideo = iframe;
+            
+            // Збільшуємо слайд
+            this.enlargeVideoSlide(slide);
+        }
+    }
+    
+    pauseAllVideos() {
+        // Зупиняємо всі відео шляхом перезавантаження iframe
+        const allIframes = document.querySelectorAll('.video-container iframe');
+        allIframes.forEach(iframe => {
+            iframe.src = iframe.src.replace('&autoplay=1', '');
+        });
+        
+        // Видаляємо класи відтворення
+        const allSlides = document.querySelectorAll('.swiper-slide');
+        allSlides.forEach(slide => {
+            slide.classList.remove('playing-video');
+            slide.classList.remove('enlarged');
+        });
+        
+        this.currentPlayingVideo = null;
     }
     
     enlargeVideoSlide(slide) {
@@ -148,16 +199,9 @@ class PortfolioApp {
         
         // Додаємо клас збільшення
         slide.classList.add('enlarged');
-    }
-    
-    shrinkOtherVideos(currentSlide) {
-        const allSlides = document.querySelectorAll('.swiper-slide');
-        allSlides.forEach(slide => {
-            if (slide !== currentSlide) {
-                slide.classList.remove('enlarged');
-                slide.classList.remove('playing-video');
-            }
-        });
+        
+        // Оновлюємо Swiper для коректного відображення
+        this.youtubeSwiper.update();
     }
     
     loadPortfolioItems() {
@@ -301,8 +345,11 @@ class PortfolioApp {
             const portfolioItem = document.createElement('div');
             portfolioItem.className = `portfolio-item ${item.category}`;
             portfolioItem.setAttribute('data-category', item.category);
+            portfolioItem.setAttribute('tabindex', '0');
+            portfolioItem.setAttribute('role', 'button');
+            portfolioItem.setAttribute('aria-label', `Переглянути проект: ${item.title}`);
             portfolioItem.innerHTML = `
-                <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/002366/FFFFFF?text=Image+Loading'">
+                <img src="${item.image}" alt="${item.title}" loading="eager" onerror="this.src='https://via.placeholder.com/600x400/002366/FFFFFF?text=Image+Loading'">
                 <div class="portfolio-item-overlay">
                     <h3>${item.title}</h3>
                     <p>${this.getCategoryName(item.category)}</p>
@@ -312,6 +359,13 @@ class PortfolioApp {
             
             portfolioItem.addEventListener('click', () => {
                 this.openLightbox(item);
+            });
+            
+            portfolioItem.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.openLightbox(item);
+                }
             });
             
             grid.appendChild(portfolioItem);
@@ -331,9 +385,12 @@ class PortfolioApp {
         // Створення lightbox
         const lightbox = document.createElement('div');
         lightbox.className = 'lightbox';
+        lightbox.setAttribute('role', 'dialog');
+        lightbox.setAttribute('aria-modal', 'true');
+        lightbox.setAttribute('aria-label', `Деталі проекту: ${item.title}`);
         lightbox.innerHTML = `
             <div class="lightbox-content">
-                <span class="lightbox-close">&times;</span>
+                <span class="lightbox-close" tabindex="0" role="button" aria-label="Закрити">&times;</span>
                 <img src="${item.image}" alt="${item.title}">
                 <div class="lightbox-info">
                     <h3>${item.title}</h3>
@@ -345,20 +402,59 @@ class PortfolioApp {
         
         document.body.appendChild(lightbox);
         
+        // Запобігаємо скролінгу body
+        document.body.style.overflow = 'hidden';
+        
+        // Фокус на кнопку закриття
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+        if (closeBtn) {
+            closeBtn.focus();
+        }
+        
         // Закриття lightbox
+        const closeLightbox = () => {
+            document.body.removeChild(lightbox);
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleKeydown);
+        };
+        
+        const handleKeydown = (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+            if (e.key === 'Tab') {
+                // Утримуємо фокус всередині lightbox
+                const focusableElements = lightbox.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        };
+        
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
-                document.body.removeChild(lightbox);
+                closeLightbox();
             }
         });
         
-        // Закриття по ESC
-        document.addEventListener('keydown', function closeLightbox(e) {
-            if (e.key === 'Escape') {
-                document.body.removeChild(lightbox);
-                document.removeEventListener('keydown', closeLightbox);
+        closeBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                closeLightbox();
             }
         });
+        
+        document.addEventListener('keydown', handleKeydown);
     }
     
     setupEventListeners() {
@@ -374,6 +470,14 @@ class PortfolioApp {
                     // Застосування фільтра
                     this.currentFilter = e.target.dataset.filter;
                     this.renderPortfolioItems();
+                });
+                
+                // Додаємо підтримку клавіатури
+                btn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        btn.click();
+                    }
                 });
             });
         }
@@ -395,6 +499,10 @@ class PortfolioApp {
                         behavior: 'smooth',
                         block: 'start'
                     });
+                    // Фокус на цільовий елемент для доступності
+                    if (target.hasAttribute('tabindex')) {
+                        target.focus();
+                    }
                 }
             });
         });
