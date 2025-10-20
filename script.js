@@ -20,6 +20,10 @@ class PortfolioApp {
             slidesPerView: 1,
             spaceBetween: 30,
             loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -38,22 +42,41 @@ class PortfolioApp {
             }
         });
         
-        // Додавання демо відео (замінити на ваші)
-        this.addDemoVideos();
+        // Додавання ваших відео
+        this.addYouTubeVideos();
     }
     
-    addDemoVideos() {
+    addYouTubeVideos() {
         const swiperWrapper = document.querySelector('.youtubeSwiper .swiper-wrapper');
         
-        // Демо дані - замінити на ваші YouTube ID
-        const demoVideos = [
-            { id: 'dQw4w9WgXcQ', title: 'Character Animation' },
-            { id: 'dQw4w9WgXcQ', title: 'Environment Design' },
-            { id: 'dQw4w9WgXcQ', title: 'Object Modeling' },
-            { id: 'dQw4w9WgXcQ', title: 'Spline Interactive' }
+        // Ваші YouTube відео
+        const youtubeVideos = [
+            { id: 'nju54URHj1o', title: '3D Character Animation' },
+            { id: 'P6txqQepIAo', title: 'Environment Design' },
+            { id: '17iTKiINxeI', title: 'Product Modeling' },
+            { id: 'qTsKHPwVHTE', title: 'Character Rigging' },
+            { id: '_CAfOHE8CNk', title: 'Architectural Visualization' },
+            { id: 'CB-NdCaasvY', title: 'Animation Showcase' },
+            { id: 'e7vSVe7NVOg', title: '3D Sculpting' },
+            { id: '8fhFvZ2CpD4', title: 'Real-time Rendering' },
+            { id: 'BPol_uyzz9E', title: 'Character Design' },
+            { id: 'TAkGXAFx0bo', title: 'Interactive Animation' },
+            { id: '86g436oyWR0', title: '3D Modeling Process' },
+            { id: 'IY_g_TP-D-s', title: 'Texturing Workflow' },
+            { id: 'fMYJDM-90J4', title: 'Lighting Setup' },
+            { id: 'H81BJ8wbVec', title: 'Animation Breakdown' },
+            { id: 'UKv7AuvLSRk', title: 'Character Creation' },
+            { id: 'gC0dEPs26PQ', title: 'Environment Lighting' },
+            { id: 'C3hkMcEh0ng', title: 'Product Design' },
+            { id: 'NZ5izvyyDyA', title: '3D Animation' },
+            { id: 'DAfdNaCM048', title: 'Modeling Tutorial' },
+            { id: 'cF0xEL5GSW0', title: 'Rendering Techniques' },
+            { id: 'eADFJMA_tYw', title: 'Spline Integration' },
+            { id: 'aFrGm6SgtfI', title: 'UE5 Showcase' },
+            { id: 'jZWjJB8dZnU', title: 'Blender Workflow' }
         ];
         
-        demoVideos.forEach(video => {
+        youtubeVideos.forEach(video => {
             const slide = document.createElement('div');
             slide.className = 'swiper-slide';
             slide.innerHTML = `
@@ -62,7 +85,8 @@ class PortfolioApp {
                         src="https://www.youtube.com/embed/${video.id}" 
                         title="${video.title}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
+                        allowfullscreen
+                        loading="lazy">
                     </iframe>
                 </div>
             `;
@@ -73,49 +97,126 @@ class PortfolioApp {
     }
     
     loadPortfolioItems() {
-        // Демо дані портфоліо - замінити на ваші
+        // Ваші проекти портфоліо
         this.portfolioItems = [
             {
                 id: 1,
-                image: 'https://via.placeholder.com/600x400/5072A7/FFFFFF?text=Character+Model',
-                title: 'Fantasy Character',
-                category: 'characters',
-                link: '#'
+                image: './assets/images/Bad.png',
+                title: 'Bed Design',
+                category: 'objects',
+                description: 'Modern bed design with detailed textures'
             },
             {
                 id: 2,
-                image: 'https://via.placeholder.com/600x400/00308F/FFFFFF?text=Weapon+Design',
-                title: 'Sci-fi Weapon',
-                category: 'objects',
-                link: '#'
+                image: './assets/images/bodybuilder.png',
+                title: 'Bodybuilder Character',
+                category: 'characters',
+                description: 'Muscular character modeling and rigging'
             },
             {
                 id: 3,
-                image: 'https://via.placeholder.com/600x400/002366/FFFFFF?text=Medieval+Room',
-                title: 'Medieval Chamber',
+                image: './assets/images/Cafe1.png',
+                title: 'Cafe Interior 1',
                 category: 'environments',
-                link: '#'
+                description: 'Cozy cafe interior design'
             },
             {
                 id: 4,
-                image: 'https://via.placeholder.com/600x400/5072A7/FFFFFF?text=Creature+Design',
-                title: 'Mythical Creature',
-                category: 'characters',
-                link: '#'
+                image: './assets/images/Cafe2.png',
+                title: 'Cafe Interior 2',
+                category: 'environments',
+                description: 'Modern cafe environment'
             },
             {
                 id: 5,
-                image: 'https://via.placeholder.com/600x400/00308F/FFFFFF?text=Furniture+Set',
-                title: 'Modern Furniture',
+                image: './assets/images/Coin_C4.png',
+                title: 'Coin Design',
                 category: 'objects',
-                link: '#'
+                description: 'Detailed coin modeling'
             },
             {
                 id: 6,
-                image: 'https://via.placeholder.com/600x400/002366/FFFFFF?text=Forest+Scene',
-                title: 'Enchanted Forest',
+                image: './assets/images/cottage.png',
+                title: 'Cottage House',
                 category: 'environments',
-                link: '#'
+                description: 'Rustic cottage exterior'
+            },
+            {
+                id: 7,
+                image: './assets/images/equipment_for_park_areas.png',
+                title: 'Park Equipment',
+                category: 'objects',
+                description: 'Outdoor park furniture set'
+            },
+            {
+                id: 8,
+                image: './assets/images/Farmer.png',
+                title: 'Farmer Character',
+                category: 'characters',
+                description: 'Rural character design'
+            },
+            {
+                id: 9,
+                image: './assets/images/Girls2.png',
+                title: 'Female Character',
+                category: 'characters',
+                description: 'Stylized female character'
+            },
+            {
+                id: 10,
+                image: './assets/images/mattresses.png',
+                title: 'Mattress Collection',
+                category: 'objects',
+                description: 'Product design series'
+            },
+            {
+                id: 11,
+                image: './assets/images/miro_chair.png',
+                title: 'Miro Chair',
+                category: 'objects',
+                description: 'Modern chair design'
+            },
+            {
+                id: 12,
+                image: './assets/images/Rabbit.png',
+                title: 'Rabbit Character',
+                category: 'characters',
+                description: 'Cartoon animal character'
+            },
+            {
+                id: 13,
+                image: './assets/images/SB1.png',
+                title: 'Sofa Design 1',
+                category: 'objects',
+                description: 'Contemporary sofa'
+            },
+            {
+                id: 14,
+                image: './assets/images/SB2.png',
+                title: 'Sofa Design 2',
+                category: 'objects',
+                description: 'Modern sofa variation'
+            },
+            {
+                id: 15,
+                image: './assets/images/Sofa_2.png',
+                title: 'Luxury Sofa',
+                category: 'objects',
+                description: 'High-end furniture design'
+            },
+            {
+                id: 16,
+                image: './assets/images/Sofa_Blue.png',
+                title: 'Blue Sofa',
+                category: 'objects',
+                description: 'Colored furniture piece'
+            },
+            {
+                id: 17,
+                image: './assets/images/Vent.png',
+                title: 'Ventilation System',
+                category: 'objects',
+                description: 'Industrial design'
             }
         ];
         
@@ -133,17 +234,18 @@ class PortfolioApp {
         filteredItems.forEach(item => {
             const portfolioItem = document.createElement('div');
             portfolioItem.className = `portfolio-item ${item.category}`;
+            portfolioItem.setAttribute('data-category', item.category);
             portfolioItem.innerHTML = `
-                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/002366/FFFFFF?text=Image+Loading'">
                 <div class="portfolio-item-overlay">
                     <h3>${item.title}</h3>
                     <p>${this.getCategoryName(item.category)}</p>
+                    <p class="item-description">${item.description}</p>
                 </div>
             `;
             
             portfolioItem.addEventListener('click', () => {
-                // Тут можна додати lightbox або посилання на детальну сторінку
-                console.log('Clicked:', item.title);
+                this.openLightbox(item);
             });
             
             grid.appendChild(portfolioItem);
@@ -157,6 +259,40 @@ class PortfolioApp {
             'environments': 'Environment Design'
         };
         return categories[category] || category;
+    }
+    
+    openLightbox(item) {
+        // Створення lightbox
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.innerHTML = `
+            <div class="lightbox-content">
+                <span class="lightbox-close">&times;</span>
+                <img src="${item.image}" alt="${item.title}">
+                <div class="lightbox-info">
+                    <h3>${item.title}</h3>
+                    <p class="lightbox-category">${this.getCategoryName(item.category)}</p>
+                    <p class="lightbox-description">${item.description}</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(lightbox);
+        
+        // Закриття lightbox
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
+                document.body.removeChild(lightbox);
+            }
+        });
+        
+        // Закриття по ESC
+        document.addEventListener('keydown', function closeLightbox(e) {
+            if (e.key === 'Escape') {
+                document.body.removeChild(lightbox);
+                document.removeEventListener('keydown', closeLightbox);
+            }
+        });
     }
     
     setupEventListeners() {
@@ -223,13 +359,4 @@ class PortfolioApp {
 // Ініціалізація додатку
 document.addEventListener('DOMContentLoaded', () => {
     new PortfolioApp();
-});
-
-// Обробка помилок завантаження зображень
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('img').forEach(img => {
-        img.addEventListener('error', function() {
-            this.src = 'https://via.placeholder.com/600x400/002366/FFFFFF?text=Image+Not+Found';
-        });
-    });
 });
