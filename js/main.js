@@ -138,24 +138,24 @@ const youtubeVideos = [
 
 // Portfolio data filled from img/portfolio
 const portfolioItems = [
-    { id: 1,  title: 'Bad',                 category: 'characters',   image: 'img/portfolio/Bad.png',                 description: 'Portfolio work', size: 'normal' },
-    { id: 2,  title: 'Budda 1',            category: 'environments', image: 'img/portfolio/Budda1.png',             description: 'Portfolio work', size: 'normal' },
-    { id: 3,  title: 'Budda 2',            category: 'environments', image: 'img/portfolio/Budda2.png',             description: 'Portfolio work', size: 'normal' },
-    { id: 4,  title: 'Cafe 1',             category: 'environments', image: 'img/portfolio/Cafe1.png',              description: 'Portfolio work', size: 'wide'   },
-    { id: 5,  title: 'Cafe 2',             category: 'environments', image: 'img/portfolio/Cafe2.png',              description: 'Portfolio work', size: 'normal' },
-    { id: 6,  title: 'Cat',                 category: 'characters',   image: 'img/portfolio/Cat.png',                description: 'Portfolio work', size: 'normal' },
-    { id: 7,  title: 'Coin C4',             category: 'products',     image: 'img/portfolio/Coin_C4.png',            description: 'Portfolio work', size: 'normal' },
-    { id: 8,  title: 'Farmer',              category: 'characters',   image: 'img/portfolio/Farmer.png',             description: 'Portfolio work', size: 'tall'   },
-    { id: 9,  title: 'Girls 2',             category: 'characters',   image: 'img/portfolio/Girls2.png',             description: 'Portfolio work', size: 'normal' },
-    { id:10,  title: 'Rabbit',              category: 'characters',   image: 'img/portfolio/Rabbit.png',             description: 'Portfolio work', size: 'normal' },
-    { id:11,  title: 'Sofa 2',              category: 'products',     image: 'img/portfolio/Sofa_2.png',             description: 'Portfolio work', size: 'normal' },
-    { id:12,  title: 'Sofa Blue',           category: 'products',     image: 'img/portfolio/Sofa_Blue.png',          description: 'Portfolio work', size: 'normal' },
-    { id:13,  title: 'Vent',                category: 'products',     image: 'img/portfolio/Vent.png',               description: 'Portfolio work', size: 'normal' },
-    { id:14,  title: 'Bodybuilder',         category: 'characters',   image: 'img/portfolio/bodybuilder.png',        description: 'Portfolio work', size: 'large'  },
-    { id:15,  title: 'Cottage',             category: 'environments', image: 'img/portfolio/cottage.png',            description: 'Portfolio work', size: 'wide'   },
-    { id:16,  title: 'Equipment for Parks', category: 'products',     image: 'img/portfolio/equipment_for_park_areas.png', description: 'Portfolio work', size: 'normal' },
-    { id:17,  title: 'Mattresses',          category: 'products',     image: 'img/portfolio/mattresses.png',         description: 'Portfolio work', size: 'normal' },
-    { id:18,  title: 'Miro Chair',          category: 'products',     image: 'img/portfolio/miro_chair.png',         description: 'Portfolio work', size: 'normal' },
+    { id: 1,  title: 'Bad',                 category: 'characters',   image: 'img/portfolio/Bad.jpg',                 description: 'Portfolio work', size: 'normal' },
+    { id: 2,  title: 'Budda 1',            category: 'environments', image: 'img/portfolio/Budda_Character_1.jpg',    description: 'Portfolio work', size: 'normal' },
+    { id: 3,  title: 'Budda 2',            category: 'environments', image: 'img/portfolio/Budda_Character_2.jpg',    description: 'Portfolio work', size: 'normal' },
+    { id: 4,  title: 'Cafe 1',             category: 'environments', image: 'img/portfolio/Cafe1.jpg',               description: 'Portfolio work', size: 'wide'   },
+    { id: 5,  title: 'Cafe 2',             category: 'environments', image: 'img/portfolio/Cafe2.jpg',               description: 'Portfolio work', size: 'normal' },
+    { id: 6,  title: 'Cat',                category: 'characters',   image: 'img/portfolio/Cat.jpg',                 description: 'Portfolio work', size: 'normal' },
+    { id: 7,  title: 'Coin C4',            category: 'products',     image: 'img/portfolio/Coin_C4.jpg',             description: 'Portfolio work', size: 'normal' },
+    { id: 8,  title: 'Farmer',             category: 'characters',   image: 'img/portfolio/Farmer.jpg',              description: 'Portfolio work', size: 'tall'   },
+    { id: 9,  title: 'Girls 2',            category: 'characters',   image: 'img/portfolio/Girls2.jpg',              description: 'Portfolio work', size: 'normal' },
+    { id:10,  title: 'Rabbit',             category: 'characters',   image: 'img/portfolio/Rabbit.jpg',              description: 'Portfolio work', size: 'normal' },
+    { id:11,  title: 'Sofa 2',             category: 'products',     image: 'img/portfolio/Sofa_2.jpg',              description: 'Portfolio work', size: 'normal' },
+    { id:12,  title: 'Sofa Blue',          category: 'products',     image: 'img/portfolio/Sofa_Blue.jpg',           description: 'Portfolio work', size: 'normal' },
+    { id:13,  title: 'Vent',               category: 'products',     image: 'img/portfolio/Vent.jpg',                description: 'Portfolio work', size: 'normal' },
+    { id:14,  title: 'Bodybuilder',        category: 'characters',   image: 'img/portfolio/bodybuilder.jpg',         description: 'Portfolio work', size: 'large'  },
+    { id:15,  title: 'Cottage',            category: 'environments', image: 'img/portfolio/cottage.jpg',             description: 'Portfolio work', size: 'wide'   },
+    { id:16,  title: 'Equipment for Parks',category: 'products',     image: 'img/portfolio/equipment_for_park_areas.jpg', description: 'Portfolio work', size: 'normal' },
+    { id:17,  title: 'Mattresses',         category: 'products',     image: 'img/portfolio/mattresses.jpg',          description: 'Portfolio work', size: 'normal' },
+    { id:18,  title: 'Miro Chair',         category: 'products',     image: 'img/portfolio/miro_chair.jpg',          description: 'Portfolio work', size: 'normal' },
 ];
 
 // 3D Logo Setup
@@ -691,3 +691,68 @@ function centerToIframeIndex(idx) {
         currentCarouselIndex = idx;
     }
 }
+
+function initFooterAnimationFor(svgId) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+
+  const viewBox = svg.getAttribute('viewBox');
+  let width = 1200, height = 120;
+  if (viewBox) {
+    const parts = viewBox.split(' ');
+    if (parts.length === 4) {
+      width = parseFloat(parts[2]);
+      height = parseFloat(parts[3]);
+    }
+  }
+
+  // Clear existing lines on re-init
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  const linesCount = 20;
+  for (let i = 0; i < linesCount; i++) {
+    const y = Math.random() * height;
+    const len = 80 + Math.random() * 600; // довжина лінії
+    const x = Math.random() * (width - len);
+    const strokeW = (1 + Math.random() * 4).toFixed(1);
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x);
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', x + len);
+    line.setAttribute('y2', y);
+    line.setAttribute('class', 'footer-line');
+
+    // Колір з невеликою варіацією насиченості
+    const base = [106, 139, 232];
+    const jitter = Math.floor(Math.random() * 20) - 10;
+    const r = Math.min(255, Math.max(0, base[0] + jitter));
+    const g = Math.min(255, Math.max(0, base[1] + jitter));
+    const b = Math.min(255, Math.max(0, base[2] + jitter));
+    const alpha = 0.45 + Math.random() * 0.25;
+    line.setAttribute('stroke', `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`);
+    line.setAttribute('stroke-width', strokeW);
+
+    // Випадкові параметри руху
+    const speed = 8 + Math.random() * 18; // 8s ... 26s
+    const delay = -2 + Math.random() * 4; // негативні затримки для розсинхрону
+    const start = `${-20 - Math.random() * 60}%`; // -20% ... -80%
+    const end = `${20 + Math.random() * 60}%`;   // 20% ... 80%
+
+    line.style.setProperty('--speed', `${speed}s`);
+    line.style.setProperty('--delay', `${delay.toFixed(2)}s`);
+    line.style.setProperty('--start', start);
+    line.style.setProperty('--end', end);
+
+    svg.appendChild(line);
+  }
+}
+
+function initFooterAnimation() {
+  initFooterAnimationFor('footerSVGTop');
+  initFooterAnimationFor('footerSVGBottom');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initFooterAnimation();
+});
