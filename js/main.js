@@ -625,24 +625,40 @@ document.getElementById('logo3D').addEventListener('click', () => {
 // Scroll Animations
 function initScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
-    
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    // Disconnect previous observer to avoid duplicates on re-init
+    if (window.__scrollObserver) {
+        try { window.__scrollObserver.disconnect(); } catch (e) {}
+        window.__scrollObserver = null;
+    }
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('animate-in');
+                // On mobile, run once: stop observing after first appearance
+                if (isMobile) {
+                    observer.unobserve(entry.target);
+                }
             } else {
-                // Remove animate-in when leaving viewport to allow re-trigger on scroll
-                entry.target.classList.remove('animate-in');
+                // Desktop/tablet: allow re-trigger; Mobile: keep visible
+                if (!isMobile) {
+                    entry.target.classList.remove('animate-in');
+                }
             }
         });
     }, {
         threshold: 0.2,
         rootMargin: '0px'
     });
-    
+
     animatedElements.forEach(element => {
         observer.observe(element);
     });
+
+    // Store observer globally for safe re-initialization
+    window.__scrollObserver = observer;
 }
 
 // Допоміжні функції для безшовного зациклення каруселі
