@@ -822,15 +822,15 @@ footer {
 }
 .footer-animation {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
+    left: 0;
+    right: 0;
+    width: 100%;
     height: 20px;
     pointer-events: none;
 }
 .footer-animation.top { 
     top: 0; 
-    transform: translateX(-50%) scaleY(-1);
+    transform: scaleY(-1);
 }
 .footer-animation.bottom { bottom: 0; }
 .footer-animation svg {
