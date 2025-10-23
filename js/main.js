@@ -163,6 +163,14 @@ let scene, camera, renderer, model, controls;
 let mouseX = 0, mouseY = 0;
 const windowHalfX = window.innerWidth / 2;
 const windowHalfY = window.innerHeight / 2;
+// Декларації для зоряного неба
+let starCanvas = null;
+let starCtx = null;
+let stars = [];
+let comets = [];
+let starfieldAnimId = null;
+let nextCometAt = 0;
+let lastStarframeTime = 0;
 
 // Initialize the website
 document.addEventListener('DOMContentLoaded', () => {
@@ -189,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add window resize handler
     window.addEventListener('resize', onWindowResize);
+    window.addEventListener('resize', resizeStarfield);
     
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -203,6 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Відновити футер-анімацію
+    initFooterAnimation();
+
+    // Ініціалізація зоряного неба наприкінці, щоб не блокувати інше
+    try {
+        initStarfield();
+    } catch (e) {
+        console.warn('Starfield init failed:', e);
+    }
 });
 
 // Initialize YouTube Carousel
@@ -257,13 +276,15 @@ function setupYouTubePlayers() {
 
 function initYouTubePlayers() {
     ytPlayers = [];
-    const iframes = carouselTrack.querySelectorAll('iframe[id^="yt-player-"]');
+    const iframes = carouselTrack.querySelectorAll('iframe[id^="yt-player-"][data-yt-index]');
     iframes.forEach((iframe, idx) => {
-        ytPlayers[idx] = new YT.Player(iframe.id, {
-            events: {
-                onStateChange: (event) => onPlayerStateChange(event, idx)
-            }
-        });
+        try {
+            ytPlayers[idx] = new YT.Player(iframe.id, {
+                events: {
+                    onStateChange: (event) => onPlayerStateChange(event, idx)
+                }
+            });
+        } catch (_) {}
     });
 }
 
@@ -311,6 +332,8 @@ function init3DLogo() {
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
+    renderer.domElement.style.position = 'relative';
+    renderer.domElement.style.zIndex = '1';
     
     // Add lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Increased ambient light
@@ -357,6 +380,7 @@ function init3DLogo() {
             model.position.y = baseModelY;
             
             // Scale up the model significantly
+
             model.scale.set(3.5, 3.5, 3.5);
             
             scene.add(model);
@@ -696,6 +720,7 @@ function initFooterAnimationFor(svgId) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
 
+  const NS = 'http://www.w3.org/2000/svg';
   const viewBox = svg.getAttribute('viewBox');
   let width = 1200, height = 120;
   if (viewBox) {
@@ -706,53 +731,253 @@ function initFooterAnimationFor(svgId) {
     }
   }
 
-  // Clear existing lines on re-init
+  // Clear existing content on re-init
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-  const linesCount = 20;
-  for (let i = 0; i < linesCount; i++) {
-    const y = Math.random() * height;
-    const len = 80 + Math.random() * 600; // довжина лінії
-    const x = Math.random() * (width - len);
-    const strokeW = (1 + Math.random() * 4).toFixed(1);
+  // Ensure <defs> exists for gradients
+  const defs = svg.querySelector('defs') || svg.insertBefore(document.createElementNS(NS, 'defs'), svg.firstChild);
 
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', x);
-    line.setAttribute('y1', y);
-    line.setAttribute('x2', x + len);
-    line.setAttribute('y2', y);
-    line.setAttribute('class', 'footer-line');
+  // Number of moving circles
+  const circlesCount = 14;
 
-    // Колір з невеликою варіацією насиченості
+  for (let i = 0; i < circlesCount; i++) {
+    // Random diameter 1px..3px
+    const diameter = 1 + Math.random() * 2; // 1..3
+    const radius = diameter / 2;
+
+    const trailLen = 60;
+    const cy = Math.max(radius, Math.min(height - radius, Math.random() * height));
+
+    // Random direction
+    const dir = Math.random() < 0.5 ? 'ltr' : 'rtl';
+
+    // Start cx off-screen depending on direction
+    const cx = dir === 'ltr' ? (-trailLen - radius) : (width + trailLen + radius);
+
+    // Color with slight variation
     const base = [106, 139, 232];
     const jitter = Math.floor(Math.random() * 20) - 10;
-    const r = Math.min(255, Math.max(0, base[0] + jitter));
-    const g = Math.min(255, Math.max(0, base[1] + jitter));
-    const b = Math.min(255, Math.max(0, base[2] + jitter));
-    const alpha = 0.45 + Math.random() * 0.25;
-    line.setAttribute('stroke', `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`);
-    line.setAttribute('stroke-width', strokeW);
+    const cr = Math.min(255, Math.max(0, base[0] + jitter));
+    const cg = Math.min(255, Math.max(0, base[1] + jitter));
+    const cb = Math.min(255, Math.max(0, base[2] + jitter));
 
-    // Випадкові параметри руху
-    const speed = 8 + Math.random() * 18; // 8s ... 26s
-    const delay = -2 + Math.random() * 4; // негативні затримки для розсинхрону
-    const start = `${-20 - Math.random() * 60}%`; // -20% ... -80%
-    const end = `${20 + Math.random() * 60}%`;   // 20% ... 80%
+    // Gradient for trail (near circle 60% transparency -> end 100%)
+    const grad = document.createElementNS(NS, 'linearGradient');
+    const gradId = `trailGrad-${svgId}-${i}-${Date.now()}`;
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('gradientUnits', 'objectBoundingBox');
+    grad.setAttribute('x1', dir === 'rtl' ? '0%' : '0%');
+    grad.setAttribute('y1', '0%');
+    grad.setAttribute('x2', dir === 'rtl' ? '100%' : '100%');
+    grad.setAttribute('y2', '0%');
 
-    line.style.setProperty('--speed', `${speed}s`);
-    line.style.setProperty('--delay', `${delay.toFixed(2)}s`);
-    line.style.setProperty('--start', start);
-    line.style.setProperty('--end', end);
+    const stopA = document.createElementNS(NS, 'stop');
+    stopA.setAttribute('offset', dir === 'rtl' ? '0%' : '0%');
+    stopA.setAttribute('stop-color', `rgb(${cr}, ${cg}, ${cb})`);
+    stopA.setAttribute('stop-opacity', dir === 'rtl' ? '0.4' : '0'); // 60% transparent near circle for RTL, 100% transparent at far end
 
-    svg.appendChild(line);
+    const stopB = document.createElementNS(NS, 'stop');
+    stopB.setAttribute('offset', dir === 'rtl' ? '100%' : '100%');
+    stopB.setAttribute('stop-color', `rgb(${cr}, ${cg}, ${cb})`);
+    stopB.setAttribute('stop-opacity', dir === 'rtl' ? '0' : '0.4');
+
+    grad.appendChild(stopA);
+    grad.appendChild(stopB);
+    defs.appendChild(grad);
+
+    // Group to animate circle + its trail
+    const group = document.createElementNS(NS, 'g');
+
+    // Circle
+    const circle = document.createElementNS(NS, 'circle');
+    circle.setAttribute('cx', cx.toFixed(2));
+    circle.setAttribute('cy', cy.toFixed(2));
+    circle.setAttribute('r', radius.toFixed(2));
+    circle.setAttribute('fill', `rgba(${cr}, ${cg}, ${cb}, 0.8)`);
+
+    // Trail rectangle 60px long, height equals diameter, positioned behind movement
+    const trail = document.createElementNS(NS, 'rect');
+    trail.setAttribute('x', (dir === 'ltr' ? (cx - trailLen) : cx).toFixed(2));
+    trail.setAttribute('y', (cy - radius).toFixed(2));
+    trail.setAttribute('width', trailLen);
+    trail.setAttribute('height', diameter.toFixed(2));
+    trail.setAttribute('fill', `url(#${gradId})`);
+
+    group.appendChild(trail);
+    group.appendChild(circle);
+
+    // Random movement parameters (unique per circle index)
+    const minSpeed = 8, maxSpeed = 26;
+    const speed = minSpeed + (i / Math.max(1, circlesCount - 1)) * (maxSpeed - minSpeed);
+    const delay = -2 + Math.random() * 4; // negative delays for de-sync
+
+    // Start/end: spawn off-screen and die off-screen after trail exits
+    const distance = width + 2 * trailLen + 2 * radius; // move across + full trail
+    const start = '0px';
+    const end   = dir === 'ltr' ? `${distance}px` : `-${distance}px`;
+
+    // Inline animation styles using existing keyframes footer-drift
+    group.style.animation = `footer-drift ${speed}s linear infinite`;
+    group.style.animationDirection = 'normal';
+    group.style.animationDelay = `${delay.toFixed(2)}s`;
+    group.style.setProperty('--start', start);
+    group.style.setProperty('--end', end);
+    group.style.willChange = 'transform';
+
+    svg.appendChild(group);
   }
 }
+
 
 function initFooterAnimation() {
   initFooterAnimationFor('footerSVGTop');
   initFooterAnimationFor('footerSVGBottom');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    initFooterAnimation();
-});
+function initStarfield() {
+    const container = document.querySelector('.logo-container');
+    if (!container) return;
+    // Ensure canvas exists and is layered behind
+    starCanvas = document.getElementById('starfield');
+    if (!starCanvas) {
+        starCanvas = document.createElement('canvas');
+        starCanvas.id = 'starfield';
+        starCanvas.style.position = 'absolute';
+        starCanvas.style.inset = '0';
+        starCanvas.style.zIndex = '0';
+        starCanvas.style.pointerEvents = 'none';
+        container.prepend(starCanvas);
+    }
+    starCanvas.width = container.clientWidth;
+    starCanvas.height = container.clientHeight;
+    starCtx = starCanvas.getContext('2d');
+    createStars();
+    nextCometAt = performance.now() + 500;
+    lastStarframeTime = performance.now();
+    if (!starfieldAnimId) {
+        starfieldAnimId = requestAnimationFrame(animateStarfield);
+    }
+}
+
+function createStars() {
+    if (!starCtx || !starCanvas) return;
+    const density = Math.floor((starCanvas.width * starCanvas.height) / 12000);
+    stars = [];
+    for (let i = 0; i < density; i++) {
+        const x = Math.random() * starCanvas.width;
+        const y = Math.random() * starCanvas.height;
+        const r = Math.random() * 1.2 + 0.3; // small star radius
+        // subtle twinkle via opacity
+        const baseAlpha = 0.08 + Math.random() * 0.07; // 0.08–0.15
+        const twinkleAmp = 0.03 + Math.random() * 0.04; // 0.03–0.07
+        const twinkleSpeed = 0.2 + Math.random() * 0.4; // slower twinkle
+        const phase = Math.random() * Math.PI * 2;
+        stars.push({ x, y, r, baseAlpha, twinkleAmp, twinkleSpeed, phase });
+    }
+}
+
+function spawnComet() {
+    if (!starCanvas) return;
+    const startX = Math.random() * starCanvas.width; // anywhere on screen
+    const startY = Math.random() * starCanvas.height; // anywhere on screen
+    const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.15; // ~45° with slight jitter
+    const speed = 120 + Math.random() * 140; // px/s
+    const life = 2 + Math.random() * 3; // seconds
+    const tailLen = 80 + Math.random() * 80;
+    const tailWidth = 1.5 + Math.random() * 1.5;
+    const r = 1; // comet head radius fixed to 1px
+    const createdAt = performance.now();
+    comets.push({
+        x: startX,
+        y: startY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r,
+        life,
+        tailLen,
+        tailWidth,
+        createdAt,
+        trail: [],
+    });
+}
+
+function animateStarfield(ts) {
+    starfieldAnimId = requestAnimationFrame(animateStarfield);
+    if (!starCtx || !starCanvas) return;
+    const now = performance.now();
+    const dt = lastStarframeTime ? (now - lastStarframeTime) / 1000 : 0;
+    lastStarframeTime = now;
+
+    starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+
+    // Draw stars with subtle opacity twinkle
+    for (const s of stars) {
+        const alpha = s.baseAlpha + Math.sin(ts * 0.001 * s.twinkleSpeed + s.phase) * s.twinkleAmp;
+        starCtx.globalAlpha = Math.max(0, Math.min(1, alpha));
+        starCtx.fillStyle = '#ffffff';
+        starCtx.beginPath();
+        starCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        starCtx.fill();
+    }
+    starCtx.globalAlpha = 1;
+
+    // Spawn comets at random intervals
+    if (now >= nextCometAt) {
+        spawnComet();
+        nextCometAt = now + (1500 + Math.random() * 2500);
+    }
+
+    // Update and render comets (new schema: createdAt/life/trail)
+    comets = comets.filter(c => (now - c.createdAt) / 1000 < c.life);
+    for (const c of comets) {
+        // update position
+        c.x += c.vx * dt;
+        c.y += c.vy * dt;
+
+        // maintain trail
+        c.trail.push({ x: c.x, y: c.y });
+        if (c.trail.length > Math.floor(c.tailLen / 2)) c.trail.shift();
+
+        // fade: appear 100% transparent -> fly visible -> disappear 100% transparent
+        const progress = ((now - c.createdAt) / 1000) / c.life;
+        let vis;
+        if (progress < 0.2) vis = progress / 0.2; // fade in
+        else if (progress > 0.8) vis = (1 - progress) / 0.2; // fade out
+        else vis = 1;
+        const opacity = 1 - vis;
+
+        // draw trail with gradient along movement
+        if (c.trail.length > 1) {
+            const tailStart = c.trail[0];
+            const head = c.trail[c.trail.length - 1];
+            const grad = starCtx.createLinearGradient(head.x, head.y, tailStart.x, tailStart.y);
+            grad.addColorStop(0, `rgba(255,255,255,${(opacity * 0.6).toFixed(3)})`);
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            starCtx.strokeStyle = grad;
+            starCtx.lineWidth = c.tailWidth;
+            starCtx.beginPath();
+            starCtx.moveTo(tailStart.x, tailStart.y);
+            for (let j = 1; j < c.trail.length; j++) {
+                const p = c.trail[j];
+                starCtx.lineTo(p.x, p.y);
+            }
+            starCtx.stroke();
+        }
+
+        // draw comet head
+        starCtx.globalAlpha = Math.max(0, Math.min(1, opacity));
+        starCtx.fillStyle = '#ffffff';
+        starCtx.beginPath();
+        starCtx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        starCtx.fill();
+        starCtx.globalAlpha = 1;
+    }
+}
+
+function resizeStarfield() {
+    const container = document.querySelector('.logo-container');
+    if (!container || !starCanvas) return;
+    starCanvas.width = container.clientWidth;
+    starCanvas.height = container.clientHeight;
+    createStars();
+}
