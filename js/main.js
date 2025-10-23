@@ -20,9 +20,9 @@ let currentCarouselIndex = 0;
 // YouTube videos from user-provided links
 const youtubeVideos = [
     {
-        id: 1,
-        title: '3D Animation Demo 1',
-        videoId: 'nju54URHj1o',
+        id: 7,
+        title: 'Drons_Ukraine',
+        videoId: 'e7vSVe7NVOg',
     },
     {
         id: 2,
@@ -50,9 +50,9 @@ const youtubeVideos = [
         videoId: 'CB-NdCaasvY',
     },
     {
-        id: 7,
-        title: '3D Animation Demo 7',
-        videoId: 'e7vSVe7NVOg',
+        id: 1,
+        title: '3D Animation Demo 1',
+        videoId: 'nju54URHj1o',
     },
     {
         id: 8,
@@ -138,9 +138,9 @@ const youtubeVideos = [
 
 // Portfolio data filled from img/portfolio
 const portfolioItems = [
-    { id: 1,  title: 'Bad',                 category: 'characters',   image: 'img/portfolio/Bad.jpg',                 description: 'Portfolio work', size: 'normal' },
-    { id: 2,  title: 'Budda 1',            category: 'environments', image: 'img/portfolio/Budda_Character_1.jpg',    description: 'Portfolio work', size: 'normal' },
-    { id: 3,  title: 'Budda 2',            category: 'environments', image: 'img/portfolio/Budda_Character_2.jpg',    description: 'Portfolio work', size: 'normal' },
+    { id: 1,  title: 'Bad',                 category: 'products',     image: 'img/portfolio/Bad.jpg',                 description: 'Portfolio work', size: 'normal' },
+    { id: 2,  title: 'Budda 1',            category: 'characters',   image: 'img/portfolio/Budda_Character_1.jpg',    description: 'Portfolio work', size: 'normal' },
+    { id: 3,  title: 'Budda 2',            category: 'characters',   image: 'img/portfolio/Budda_Character_2.jpg',    description: 'Portfolio work', size: 'normal' },
     { id: 4,  title: 'Cafe 1',             category: 'environments', image: 'img/portfolio/Cafe1.jpg',               description: 'Portfolio work', size: 'wide'   },
     { id: 5,  title: 'Cafe 2',             category: 'environments', image: 'img/portfolio/Cafe2.jpg',               description: 'Portfolio work', size: 'normal' },
     { id: 6,  title: 'Cat',                category: 'characters',   image: 'img/portfolio/Cat.jpg',                 description: 'Portfolio work', size: 'normal' },
@@ -882,7 +882,7 @@ function spawnComet() {
     const startY = Math.random() * starCanvas.height; // anywhere on screen
     const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.15; // ~45° with slight jitter
     const speed = 120 + Math.random() * 140; // px/s
-    const life = 2 + Math.random() * 3; // seconds
+    const life = 7; // seconds (1.5s fade-in, 4s visible, 1.5s fade-out)
     const tailLen = 80 + Math.random() * 80;
     const tailWidth = 1.5 + Math.random() * 1.5;
     const r = 1; // comet head radius fixed to 1px
@@ -940,10 +940,17 @@ function animateStarfield(ts) {
 
         // fade: appear 100% transparent -> fly visible -> disappear 100% transparent
         const progress = ((now - c.createdAt) / 1000) / c.life;
+        const fadeInSec = 1.5, visibleSec = 4, fadeOutSec = 1.5; // total 7s
+        const fadeIn = fadeInSec / c.life; // ~0.2142857
+        const fadeOutStart = (fadeInSec + visibleSec) / c.life; // ~0.7857143
         let vis;
-        if (progress < 0.2) vis = progress / 0.2; // fade in
-        else if (progress > 0.8) vis = (1 - progress) / 0.2; // fade out
-        else vis = 1;
+        if (progress < fadeIn) {
+            vis = progress / fadeIn; // fade in
+        } else if (progress > fadeOutStart) {
+            vis = (1 - progress) / (1 - fadeOutStart); // fade out
+        } else {
+            vis = 1; // fully visible during middle 4s
+        }
         const opacity = 1 - vis;
 
         // draw trail with gradient along movement
