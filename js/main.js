@@ -195,9 +195,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize scroll animations
     initScrollAnimations();
     
-    // Add window resize handler
-    window.addEventListener('resize', onWindowResize);
-    window.addEventListener('resize', resizeStarfield);
+    // Add window resize handler (RAF-throttled to prevent jank on mobile)
+    let __resizeScheduled = false;
+    function __scheduleResize() {
+        if (__resizeScheduled) return;
+        __resizeScheduled = true;
+        requestAnimationFrame(() => {
+            try { onWindowResize(); } catch (_) {}
+            try { resizeStarfield(); } catch (_) {}
+            __resizeScheduled = false;
+        });
+    }
+    window.addEventListener('resize', __scheduleResize);
     
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -861,7 +870,10 @@ function initStarfield() {
 
 function createStars() {
     if (!starCtx || !starCanvas) return;
-    const density = Math.floor((starCanvas.width * starCanvas.height) / 12000);
+    const area = starCanvas.width * starCanvas.height;
+    const isMobile = window.innerWidth <= 768;
+    const divisor = isMobile ? 28000 : 12000;
+    const density = Math.floor(area / divisor);
     stars = [];
     for (let i = 0; i < density; i++) {
         const x = Math.random() * starCanvas.width;
