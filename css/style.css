@@ -175,11 +175,19 @@ header {
     height: 100%;
     overflow: visible;
 }
-
 #logo3D {
     width: 100%;
     height: 100%;
     overflow: visible;
+    position: relative;
+    z-index: 1;
+}
+#starfield {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
 }
 
 .header-text {
@@ -240,10 +248,10 @@ nav.scrolled {
 }
 
 .logo {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--white);
-    font-family: 'Montserrat', sans-serif;
+    display: inline-block;
+    width: 60px;
+    height: auto;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -496,6 +504,11 @@ nav.scrolled {
         width: 60%;
         height: auto;
     }
+    .footer-animation svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
     
     /* Responsive Mosaic Gallery */
     .portfolio-mosaic {
@@ -526,6 +539,30 @@ nav.scrolled {
       width: 100%;
       height: 100%;
       display: block;
+    }
+    .footer-animation {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: transparent;
+    }
+    .footer-animation.top { 
+        top: 0; 
+        transform: scaleY(-1);
+    }
+    .footer-animation.bottom { bottom: 0; }
+    .footer-animation svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .footer-line {
+        stroke-linecap: round;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: footer-drift var(--speed, 12s) linear infinite alternate;
+        animation-delay: var(--delay, 0s);
     }
     
     /* Responsive Mosaic Gallery */
