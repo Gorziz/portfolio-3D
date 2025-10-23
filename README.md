@@ -1,6 +1,6 @@
-# Volodumur Bilousko - 3D Artist Portfolio
+# Bilousko Volodymyr - 3D Artist Portfolio
 
-A modern, responsive portfolio website showcasing the 3D art and animation work of Volodumur Bilousko.
+A modern, responsive portfolio website showcasing the 3D art and animation work of Bilousko Volodymyr.
 
 ## Features
 
