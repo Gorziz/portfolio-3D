@@ -830,6 +830,12 @@ nav.scrolled {
     gap: 15px;
 }
 
+/* Prevent page scroll gestures interfering with 3D rotation on touch devices */
+#logo3D {
+  touch-action: none;
+  -ms-touch-action: none;
+}
+
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
