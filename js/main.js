@@ -637,6 +637,51 @@ function init3DLogo() {
         targetRotationX = mouseY * maxRotation;
         targetRotationY = mouseX * maxRotation;
     });
+
+    // One-finger touch rotation for mobile (iOS/Android)
+    let touchActive = false;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let velX = 0; // rotation velocity around X axis (radians/frame)
+    let velY = 0; // rotation velocity around Y axis (radians/frame)
+    const damping = 0.92; // inertia damping factor per frame
+    const maxVel = THREE.MathUtils.degToRad(1.5); // cap velocity for control
+    const sensitivity = 0.004; // radians per pixel
+
+    const onTouchStart = (e) => {
+        if (!e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        touchActive = true;
+        lastTouchX = t.clientX;
+        lastTouchY = t.clientY;
+        // Prevent page scroll while interacting with the canvas
+        try { e.preventDefault(); } catch (_) {}
+    };
+
+    const onTouchMove = (e) => {
+        if (!touchActive || !e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        const dx = t.clientX - lastTouchX;
+        const dy = t.clientY - lastTouchY;
+        lastTouchX = t.clientX;
+        lastTouchY = t.clientY;
+        // Horizontal movement -> Y rotation; Vertical -> X rotation
+        velY += dx * sensitivity;
+        velX += -dy * sensitivity;
+        // Clamp velocities for better control
+        velX = THREE.MathUtils.clamp(velX, -maxVel, maxVel);
+        velY = THREE.MathUtils.clamp(velY, -maxVel, maxVel);
+        try { e.preventDefault(); } catch (_) {}
+    };
+
+    const onTouchEnd = () => {
+        touchActive = false; // keep inertia running until it decays
+    };
+
+    container.addEventListener('touchstart', onTouchStart, { passive: false });
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    container.addEventListener('touchend', onTouchEnd, { passive: true });
+    container.addEventListener('touchcancel', onTouchEnd, { passive: true });
     
     // Load 3D model or create placeholder
     try {
@@ -696,11 +741,20 @@ function init3DLogo() {
         animate();
     }
     
-    // Override the animate function to include lookAt cursor behavior
+    // Override the animate function to include lookAt cursor behavior and touch inertia
     animate = function() {
         requestAnimationFrame(animate);
         
         if (model) {
+            // Apply touch inertia by updating target rotations with decaying velocities
+            if (Math.abs(velX) > 1e-4 || Math.abs(velY) > 1e-4) {
+                targetRotationX += velX;
+                targetRotationY += velY;
+                velX *= damping;
+                velY *= damping;
+                if (Math.abs(velX) < 1e-4) velX = 0;
+                if (Math.abs(velY) < 1e-4) velY = 0;
+            }
             // Smoothly interpolate to target rotation
             model.rotation.x += (targetRotationX - model.rotation.x) * 0.05;
             model.rotation.y += (targetRotationY - model.rotation.y) * 0.05;
@@ -708,6 +762,9 @@ function init3DLogo() {
             // Limit rotation to max values
             model.rotation.x = THREE.MathUtils.clamp(model.rotation.x, -maxRotation, maxRotation);
             model.rotation.y = THREE.MathUtils.clamp(model.rotation.y, -maxRotation, maxRotation);
+            // Keep target values within bounds too
+            targetRotationX = THREE.MathUtils.clamp(targetRotationX, -maxRotation, maxRotation);
+            targetRotationY = THREE.MathUtils.clamp(targetRotationY, -maxRotation, maxRotation);
         }
         
         renderer.render(scene, camera);
