@@ -1,0 +1,5 @@
+2025-10-30T00:00:00Z ROLLBACK css/style.css
+Details: Remove mobile equal-sizing for .lang-switcher and .hamburger.
+Reason: User requested cancel of last action; restore prior UI.
+Impact: Dropdown returns to default width; functionality preserved.
+Dependencies considered: .lang-options readability and hover/tap behavior unaffected.

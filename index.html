@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilousko Volodymyr | 3D Artist</title>
+    <!-- Updated to use SVG background -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Import Map для ASCII-анімації на базі three.js (ESM) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.158.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.158.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header id="home">
+        <div class="header-content">
+            <div class="logo-container">
+                <div id="logo3D">
+                    <div id="logo3D-left"></div>
+                    <div id="logo3D-right"></div>
+                </div>
+            </div>
+            <div class="header-text">
+                <h1 data-i18n="hero.name">Bilousko Volodymyr</h1>
+                <h2 data-i18n="hero.role">3D Artist & Animator</h2>
+                <p data-i18n="hero.tagline">Creating immersive digital experiences through 3D art and animation</p>
+                <a href="#portfolio" class="btn" data-i18n="hero.cta">View My Work</a>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <div class="nav-content">
+                    <img src="img/logo.png" alt="Bilousko Volodymyr logo" class="logo">
+                    <ul class="nav-links">
+                        <li><a href="#home" data-i18n="nav.home">Home</a></li>
+                        <li><a href="#about" data-i18n="nav.about">About</a></li>
+                        <li><a href="#portfolio" data-i18n="nav.portfolio">Portfolio</a></li>
+                        <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                        <li class="nav-lang">
+                            <div id="lang-toggle" class="lang-toggle" role="radiogroup" aria-label="Language">
+                                <div class="toggle-track" aria-hidden="true">
+                                    <div class="toggle-thumb" data-color="uk"></div>
+                                </div>
+                                <button type="button" class="toggle-option" data-value="uk" role="radio" aria-checked="true">UA</button>
+                                <button type="button" class="toggle-option" data-value="en" role="radio" aria-checked="false">EN</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll" data-animation="slide-left" data-i18n="about.title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text animate-on-scroll" data-animation="slide-left">
+                    <p data-i18n="about.text">I am a professional 3D artist with expertise in creating stunning visual experiences. My passion lies in bringing ideas to life through detailed 3D modeling, animation, and interactive design.</p>
+                    <h3 data-i18n="about.skills">My Skills</h3>
+                    <div class="skills">
+                        <div class="skill animate-on-scroll" data-animation="slide-left">
+                            <div class="skill-name">Blender3D</div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill animate-on-scroll" data-animation="slide-left">
+                            <div class="skill-name">Unreal Engine 5</div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill animate-on-scroll" data-animation="slide-left">
+                            <div class="skill-name">Clo3D</div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill animate-on-scroll" data-animation="slide-left">
+                            <div class="skill-name">Spline</div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image animate-on-scroll" data-animation="slide-right">
+                    <img src="img/logo.png" alt="VB Logo" class="about-logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="section">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll" data-animation="slide-right" data-i18n="portfolio.title">My Portfolio</h2>
+            
+            <!-- YouTube Carousel -->
+            <div class="youtube-carousel animate-on-scroll" data-animation="slide-left">
+                <h3 class="subsection-title" data-i18n="portfolio.videos">Featured Videos</h3>
+                <div class="carousel-container">
+                    <button class="carousel-arrow prev-arrow" aria-label="Попередній">
+                        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="carousel-track">
+                        <!-- YouTube videos will be added dynamically with JavaScript -->
+                    </div>
+                    <button class="carousel-arrow next-arrow" aria-label="Наступний">
+                        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Portfolio Mosaic -->
+            <div class="portfolio-mosaic">
+                <!-- Portfolio items will be added dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll" data-animation="slide-left" data-i18n="contact.title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info animate-on-scroll" data-animation="slide-right">
+                    <div class="contact-item">
+                        <img src="img/mail.png" class="contact-icon" alt="Email" aria-hidden="true">
+                        <p><a href="mailto:bilouskovladimir@gmail.com">bilouskovladimir@gmail.com</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <img src="img/phone-call.png" class="contact-icon" alt="Phone" aria-hidden="true">
+                        <p><a href="tel:+380988343461">+380988343461</a></p>
+                    </div>
+                    <div class="contact-item">
+                        <img src="img/telegram.png" class="contact-icon" alt="Telegram" aria-hidden="true">
+                        <p><a href="https://t.me/bilousko3">@bilousko3</a></p>
+                    </div>
+                </div>
+                <!-- Contact form removed per request -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+            <div class="footer-animation top" aria-hidden="true">
+                <svg id="footerSVGTop" viewBox="0 0 1200 20" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="footer-animation bottom" aria-hidden="true">
+                <svg id="footerSVGBottom" viewBox="0 0 1200 20" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="container footer-content">
+                <p class="footer-text" data-i18n="footer.text">&copy; 2025 Bilousko Volodymyr. All Rights Reserved.</p>
+            </div>
+        </footer>
+
+    <!-- Portfolio Modal -->
+    <div class="portfolio-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <!-- Modal content will be added dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/ascii.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
